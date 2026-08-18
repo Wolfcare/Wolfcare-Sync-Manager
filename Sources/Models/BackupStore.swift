@@ -11,78 +11,129 @@ final class BackupStore: ObservableObject {
         case failed(Date)
     }
 
-    @Published private(set) var sources: [String] = []
-    @Published private(set) var destination: String?
-    @Published private(set) var schedule: ScheduleKind = .off
-    @Published private(set) var runStatus: RunStatus = .idle
+    @Published private(set) var tasks: [SyncTask] = []
+    @Published private(set) var runStatuses: [UUID: RunStatus] = [:]
     @Published private(set) var logText: String = "(no log yet)"
     @Published var lastError: String?
 
     init() {
         ConfigIO.ensureConfigFilesExist()
-        reloadAll()
-    }
-
-    func reloadAll() {
-        sources = ConfigIO.loadSources()
-        destination = ConfigIO.loadDestination()
-        schedule = LaunchAgentManager.installedSchedule() ?? .off
+        tasks = ConfigIO.loadTasks()
+        for task in tasks {
+            runStatuses[task.id] = .idle
+        }
         refreshLog()
     }
 
-    var isDestinationReachable: Bool {
-        guard let destination else { return false }
-        var isDir: ObjCBool = false
-        return FileManager.default.fileExists(atPath: destination, isDirectory: &isDir) && isDir.boolValue
+    func runStatus(for taskID: UUID) -> RunStatus {
+        runStatuses[taskID] ?? .idle
     }
 
-    var canRunBackup: Bool {
-        !sources.isEmpty && isDestinationReachable && runStatus != .running
+    var overallStatus: RunStatus {
+        let statuses = runStatuses.values
+        if statuses.contains(.running) { return .running }
+        let failedDates = statuses.compactMap { status -> Date? in
+            if case .failed(let date) = status { return date }
+            return nil
+        }
+        if let latestFailure = failedDates.max() { return .failed(latestFailure) }
+        let succeededDates = statuses.compactMap { status -> Date? in
+            if case .succeeded(let date) = status { return date }
+            return nil
+        }
+        if let latestSuccess = succeededDates.max() { return .succeeded(latestSuccess) }
+        return .idle
+    }
+
+    private func persist() {
+        ConfigIO.saveTasks(tasks)
+    }
+
+    // MARK: - Tasks
+
+    @discardableResult
+    func addTask() -> UUID {
+        let task = SyncTask(name: "Backup \(tasks.count + 1)")
+        tasks.append(task)
+        runStatuses[task.id] = .idle
+        persist()
+        return task.id
+    }
+
+    func removeTask(_ taskID: UUID) {
+        tasks.removeAll { $0.id == taskID }
+        runStatuses[taskID] = nil
+        try? LaunchAgentManager.remove(taskID: taskID)
+        persist()
+    }
+
+    func renameTask(_ taskID: UUID, to name: String) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
+        tasks[index].name = name
+        persist()
     }
 
     // MARK: - Sources
 
-    func addSource(_ path: String) {
+    func addSource(_ path: String, to taskID: UUID) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         var resolved = path
         if resolved.hasSuffix("/") { resolved.removeLast() }
-        guard !resolved.isEmpty, !sources.contains(resolved) else { return }
+        guard !resolved.isEmpty, !tasks[index].sources.contains(resolved) else { return }
         var isDir: ObjCBool = false
         guard FileManager.default.fileExists(atPath: resolved, isDirectory: &isDir), isDir.boolValue else { return }
-        sources.append(resolved)
-        ConfigIO.saveSources(sources)
+        tasks[index].sources.append(resolved)
+        persist()
     }
 
-    func removeSources(at offsets: IndexSet) {
-        sources.remove(atOffsets: offsets)
-        ConfigIO.saveSources(sources)
+    func removeSources(at offsets: IndexSet, from taskID: UUID) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
+        tasks[index].sources.remove(atOffsets: offsets)
+        persist()
     }
 
     // MARK: - Destination
 
-    func setDestination(_ path: String) {
+    func setDestination(_ path: String, for taskID: UUID) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         var resolved = path
         if resolved.hasSuffix("/") { resolved.removeLast() }
         guard !resolved.isEmpty else { return }
-        destination = resolved
-        ConfigIO.saveDestination(resolved)
+        tasks[index].destination = resolved
+        persist()
+    }
+
+    func isDestinationReachable(_ taskID: UUID) -> Bool {
+        guard let destination = tasks.first(where: { $0.id == taskID })?.destination else { return false }
+        var isDir: ObjCBool = false
+        return FileManager.default.fileExists(atPath: destination, isDirectory: &isDir) && isDir.boolValue
+    }
+
+    func canRunTask(_ taskID: UUID) -> Bool {
+        guard let task = tasks.first(where: { $0.id == taskID }) else { return false }
+        return !task.sources.isEmpty && isDestinationReachable(taskID) && runStatus(for: taskID) != .running
     }
 
     // MARK: - Schedule
 
-    func applySchedule(_ kind: ScheduleKind) {
+    func applySchedule(_ kind: ScheduleKind, to taskID: UUID) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         do {
-            try LaunchAgentManager.install(schedule: kind)
-            schedule = kind
+            try LaunchAgentManager.install(taskID: taskID, schedule: kind)
+            tasks[index].schedule = kind
+            persist()
             lastError = nil
         } catch {
             lastError = "Could not install schedule: \(error.localizedDescription)"
         }
     }
 
-    func clearSchedule() {
+    func clearSchedule(for taskID: UUID) {
+        guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         do {
-            try LaunchAgentManager.remove()
-            schedule = .off
+            try LaunchAgentManager.remove(taskID: taskID)
+            tasks[index].schedule = .off
+            persist()
             lastError = nil
         } catch {
             lastError = "Could not remove schedule: \(error.localizedDescription)"
@@ -97,24 +148,23 @@ final class BackupStore: ObservableObject {
 
     // MARK: - Run
 
-    func runBackupNow() {
-        guard canRunBackup else { return }
-        runStatus = .running
-        let sourcesSnapshot = sources
-        guard let destinationSnapshot = destination else { return }
-
+    func runTaskNow(_ taskID: UUID) {
+        guard canRunTask(taskID), let task = tasks.first(where: { $0.id == taskID }) else { return }
+        runStatuses[taskID] = .running
         Task.detached(priority: .userInitiated) {
-            let ok = RsyncRunner.runBackup(
-                sources: sourcesSnapshot,
-                destinationRoot: destinationSnapshot,
-                log: ConfigIO.appendLog
-            )
-            await self.finishRun(ok: ok)
+            let ok = HeadlessRunner.run(task: task)
+            await self.finishRun(taskID: taskID, ok: ok)
         }
     }
 
-    private func finishRun(ok: Bool) {
-        runStatus = ok ? .succeeded(Date()) : .failed(Date())
+    func runAllTasksNow() {
+        for task in tasks where canRunTask(task.id) {
+            runTaskNow(task.id)
+        }
+    }
+
+    private func finishRun(taskID: UUID, ok: Bool) {
+        runStatuses[taskID] = ok ? .succeeded(Date()) : .failed(Date())
         refreshLog()
     }
 }

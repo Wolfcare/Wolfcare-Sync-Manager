@@ -6,14 +6,22 @@ struct MenuBarContentView: View {
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Text(statusLine)
+        if store.tasks.isEmpty {
+            Text("No sync tasks yet")
+        } else {
+            ForEach(store.tasks) { task in
+                Button(statusLine(for: task)) {
+                    store.runTaskNow(task.id)
+                }
+                .disabled(!store.canRunTask(task.id))
+            }
 
-        Divider()
+            Divider()
 
-        Button("Run Backup Now") {
-            store.runBackupNow()
+            Button("Run All Now") {
+                store.runAllTasksNow()
+            }
         }
-        .disabled(!store.canRunBackup)
 
         Button("Open Wolfcare Sync Manager…") {
             NSApp.activate(ignoringOtherApps: true)
@@ -27,22 +35,23 @@ struct MenuBarContentView: View {
         }
     }
 
-    private var statusLine: String {
-        switch store.runStatus {
+    private func statusLine(for task: SyncTask) -> String {
+        switch store.runStatus(for: task.id) {
         case .idle:
-            return "Idle · \(store.schedule.summary)"
+            return "\(task.name) — \(task.schedule.summary)"
         case .running:
-            return "Syncing…"
+            return "\(task.name) — Syncing…"
         case .succeeded(let date):
-            return "Last backup OK at \(Self.timeFormatter.string(from: date))"
+            return "\(task.name) — OK at \(Self.timeFormatter.string(from: date))"
         case .failed(let date):
-            return "Last backup FAILED at \(Self.timeFormatter.string(from: date))"
+            return "\(task.name) — FAILED at \(Self.timeFormatter.string(from: date))"
         }
     }
 
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.timeStyle = .short
+        formatter.dateFormat = "HH:mm"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
         return formatter
     }()
 }

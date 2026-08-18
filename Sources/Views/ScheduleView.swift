@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ScheduleView: View {
+struct TaskScheduleView: View {
     private enum Kind: String, CaseIterable, Identifiable {
         case off = "Off"
         case hourly = "Every hour"
@@ -10,6 +10,7 @@ struct ScheduleView: View {
         var id: String { rawValue }
     }
 
+    let taskID: UUID
     @EnvironmentObject private var store: BackupStore
 
     @State private var kind: Kind = .off
@@ -17,15 +18,20 @@ struct ScheduleView: View {
     @State private var minute: Int = 0
     @State private var weekday: Int = 1 // Monday
     @State private var everyN: Int = 30
+    @State private var loadedForTaskID: UUID?
 
     private let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+    private var currentSchedule: ScheduleKind {
+        store.tasks.first(where: { $0.id == taskID })?.schedule ?? .off
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Automatic Backups")
                 .font(.title2.bold())
 
-            Text("Currently: \(store.schedule.summary)")
+            Text("Currently: \(currentSchedule.summary)")
                 .foregroundStyle(.secondary)
 
             Picker("Run", selection: $kind) {
@@ -39,8 +45,8 @@ struct ScheduleView: View {
                 EmptyView()
             case .daily:
                 HStack {
-                    Stepper("Hour: \(hour)", value: $hour, in: 0...23)
-                    Stepper("Minute: \(minute)", value: $minute, in: 0...59, step: 5)
+                    Stepper(String(format: "Hour: %02d", hour), value: $hour, in: 0...23)
+                    Stepper(String(format: "Minute: %02d", minute), value: $minute, in: 0...59, step: 5)
                 }
             case .weekly:
                 HStack {
@@ -48,8 +54,8 @@ struct ScheduleView: View {
                         ForEach(0..<7, id: \.self) { Text(weekdayNames[$0]).tag($0) }
                     }
                     .frame(width: 160)
-                    Stepper("Hour: \(hour)", value: $hour, in: 0...23)
-                    Stepper("Minute: \(minute)", value: $minute, in: 0...59, step: 5)
+                    Stepper(String(format: "Hour: %02d", hour), value: $hour, in: 0...23)
+                    Stepper(String(format: "Minute: %02d", minute), value: $minute, in: 0...59, step: 5)
                 }
             case .everyN:
                 Stepper("Every \(everyN) minutes", value: $everyN, in: 1...1440)
@@ -59,9 +65,9 @@ struct ScheduleView: View {
                 Button("Apply Schedule") {
                     applySchedule()
                 }
-                if store.schedule != .off {
+                if currentSchedule != .off {
                     Button("Remove Schedule", role: .destructive) {
-                        store.clearSchedule()
+                        store.clearSchedule(for: taskID)
                         kind = .off
                     }
                 }
@@ -73,11 +79,14 @@ struct ScheduleView: View {
 
             Spacer()
         }
-        .onAppear(perform: syncFromStore)
+        .onAppear { syncFromStore() }
+        .onChange(of: taskID) { _ in syncFromStore() }
     }
 
     private func syncFromStore() {
-        switch store.schedule {
+        guard loadedForTaskID != taskID else { return }
+        loadedForTaskID = taskID
+        switch currentSchedule {
         case .off:
             kind = .off
         case .hourly:
@@ -100,6 +109,6 @@ struct ScheduleView: View {
         case .weekly: resolved = .weekly(weekday: weekday, hour: hour, minute: minute)
         case .everyN: resolved = .everyNMinutes(everyN)
         }
-        store.applySchedule(resolved)
+        store.applySchedule(resolved, to: taskID)
     }
 }

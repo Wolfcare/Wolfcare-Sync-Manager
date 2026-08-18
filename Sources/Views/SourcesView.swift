@@ -1,29 +1,31 @@
 import SwiftUI
 import AppKit
 
-struct SourcesView: View {
+struct TaskSourcesView: View {
+    let taskID: UUID
     @EnvironmentObject private var store: BackupStore
+
+    private var sources: [String] {
+        store.tasks.first(where: { $0.id == taskID })?.sources ?? []
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Directories to back up")
-                .font(.title2.bold())
-
-            if store.sources.isEmpty {
+            if sources.isEmpty {
                 ContentUnavailableViewCompat(
                     title: "No directories configured yet",
-                    message: "Add a folder to include it in every backup run.",
+                    message: "Add a folder to include it in this task's backups.",
                     systemImage: "folder.badge.plus"
                 )
             } else {
                 List {
-                    ForEach(store.sources, id: \.self) { path in
+                    ForEach(sources, id: \.self) { path in
                         Label(path, systemImage: "folder")
                             .lineLimit(1)
                             .truncationMode(.middle)
                     }
                     .onDelete { offsets in
-                        store.removeSources(at: offsets)
+                        store.removeSources(at: offsets, from: taskID)
                     }
                 }
                 .listStyle(.inset)
@@ -37,7 +39,7 @@ struct SourcesView: View {
                     Label("Add Directory…", systemImage: "plus")
                 }
                 Spacer()
-                Text("\(store.sources.count) director\(store.sources.count == 1 ? "y" : "ies")")
+                Text("\(sources.count) director\(sources.count == 1 ? "y" : "ies")")
                     .foregroundStyle(.secondary)
             }
         }
@@ -52,7 +54,7 @@ struct SourcesView: View {
         panel.message = "Choose one or more directories to back up"
         if panel.runModal() == .OK {
             for url in panel.urls {
-                store.addSource(url.path)
+                store.addSource(url.path, to: taskID)
             }
         }
     }

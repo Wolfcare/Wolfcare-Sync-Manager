@@ -2,28 +2,31 @@ import Foundation
 import Darwin
 
 /// Installs/removes a per-user LaunchAgent that relaunches this app's
-/// executable with `--run` on a schedule. This replaces the crontab
+/// executable with `--run <task-id>` on a schedule. Each sync task gets
+/// its own independently-scheduled LaunchAgent. This replaces the crontab
 /// approach in rsync_backup.sh (cron on modern macOS has Full Disk
 /// Access/permission quirks the script itself warns about).
 enum LaunchAgentManager {
 
-    static let label = "com.wolfcare.syncmanager.backup"
-
-    static var plistURL: URL {
-        FileManager.default
-            .homeDirectoryForCurrentUser
-            .appendingPathComponent("Library/LaunchAgents/\(label).plist")
+    private static func label(for taskID: UUID) -> String {
+        "com.wolfcare.syncmanager.backup.\(taskID.uuidString.lowercased())"
     }
 
-    static func install(schedule: ScheduleKind) throws {
-        try? remove()
+    private static func plistURL(for taskID: UUID) -> URL {
+        FileManager.default
+            .homeDirectoryForCurrentUser
+            .appendingPathComponent("Library/LaunchAgents/\(label(for: taskID)).plist")
+    }
+
+    static func install(taskID: UUID, schedule: ScheduleKind) throws {
+        try? remove(taskID: taskID)
         guard schedule != .off else { return }
 
         let executablePath = Bundle.main.executablePath ?? CommandLine.arguments[0]
 
         var plist: [String: Any] = [
-            "Label": label,
-            "ProgramArguments": [executablePath, "--run"],
+            "Label": label(for: taskID),
+            "ProgramArguments": [executablePath, "--run", taskID.uuidString],
             "RunAtLoad": false,
             "StandardOutPath": ConfigIO.logFile.path,
             "StandardErrorPath": ConfigIO.logFile.path,
@@ -42,24 +45,26 @@ enum LaunchAgentManager {
             plist["StartInterval"] = max(60, n * 60)
         }
 
+        let url = plistURL(for: taskID)
         let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
         try FileManager.default.createDirectory(
-            at: plistURL.deletingLastPathComponent(),
+            at: url.deletingLastPathComponent(),
             withIntermediateDirectories: true
         )
-        try data.write(to: plistURL)
+        try data.write(to: url)
 
-        try runLaunchctl(["bootstrap", "gui/\(getuid())", plistURL.path])
+        try runLaunchctl(["bootstrap", "gui/\(getuid())", url.path])
     }
 
-    static func remove() throws {
-        guard FileManager.default.fileExists(atPath: plistURL.path) else { return }
-        _ = try? runLaunchctl(["bootout", "gui/\(getuid())/\(label)"])
-        try FileManager.default.removeItem(at: plistURL)
+    static func remove(taskID: UUID) throws {
+        let url = plistURL(for: taskID)
+        guard FileManager.default.fileExists(atPath: url.path) else { return }
+        _ = try? runLaunchctl(["bootout", "gui/\(getuid())/\(label(for: taskID))"])
+        try FileManager.default.removeItem(at: url)
     }
 
-    static func installedSchedule() -> ScheduleKind? {
-        guard let data = try? Data(contentsOf: plistURL),
+    static func installedSchedule(taskID: UUID) -> ScheduleKind? {
+        guard let data = try? Data(contentsOf: plistURL(for: taskID)),
               let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any]
         else { return nil }
 

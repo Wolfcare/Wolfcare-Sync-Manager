@@ -1,24 +1,26 @@
 import SwiftUI
 import AppKit
 
-struct DestinationView: View {
+struct TaskDestinationView: View {
+    let taskID: UUID
     @EnvironmentObject private var store: BackupStore
+
+    private var destination: String? {
+        store.tasks.first(where: { $0.id == taskID })?.destination
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Destination")
-                .font(.title2.bold())
-
-            if let destination = store.destination {
+            if let destination {
                 HStack(spacing: 8) {
                     Circle()
-                        .fill(store.isDestinationReachable ? .green : .red)
+                        .fill(store.isDestinationReachable(taskID) ? .green : .red)
                         .frame(width: 10, height: 10)
                     Text(destination)
                         .lineLimit(1)
                         .truncationMode(.middle)
                 }
-                if !store.isDestinationReachable {
+                if !store.isDestinationReachable(taskID) {
                     Text("Not reachable — is the drive mounted?")
                         .font(.subheadline)
                         .foregroundStyle(.red)
@@ -51,7 +53,7 @@ struct DestinationView: View {
         panel.prompt = "Choose"
         panel.message = "Choose the backup destination root"
         if panel.runModal() == .OK, let url = panel.url {
-            store.setDestination(url.path)
+            store.setDestination(url.path, for: taskID)
         }
     }
 }

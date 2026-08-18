@@ -26,7 +26,7 @@ struct WolfcareSyncManagerApp: App {
     }
 
     private var menuBarIcon: String {
-        switch store.runStatus {
+        switch store.overallStatus {
         case .running: return "arrow.triangle.2.circlepath"
         case .failed: return "externaldrive.badge.exclamationmark"
         default: return "externaldrive.badge.checkmark"

@@ -12,21 +12,41 @@ enum ConfigIO {
     static let dirsFile = configDir.appendingPathComponent("dirs.list")
     static let confFile = configDir.appendingPathComponent("settings.conf")
     static let logFile = configDir.appendingPathComponent("backup.log")
+    static let tasksFile = configDir.appendingPathComponent("tasks.json")
 
     static func ensureConfigFilesExist() {
         let fm = FileManager.default
         try? fm.createDirectory(at: configDir, withIntermediateDirectories: true)
-        for url in [dirsFile, logFile] where !fm.fileExists(atPath: url.path) {
-            fm.createFile(atPath: url.path, contents: nil)
-        }
-        if !fm.fileExists(atPath: confFile.path) {
-            fm.createFile(atPath: confFile.path, contents: nil)
+        if !fm.fileExists(atPath: logFile.path) {
+            fm.createFile(atPath: logFile.path, contents: nil)
         }
     }
 
-    // MARK: - Source directories (dirs.list, one absolute path per line)
+    // MARK: - Sync tasks (tasks.json)
 
-    static func loadSources() -> [String] {
+    static func loadTasks() -> [SyncTask] {
+        if let data = try? Data(contentsOf: tasksFile),
+           let tasks = try? JSONDecoder().decode([SyncTask].self, from: data) {
+            return tasks
+        }
+        // First run: migrate a single-task config written by rsync_backup.sh, if any.
+        let legacySources = loadLegacySources()
+        let legacyDestination = loadLegacyDestination()
+        guard !legacySources.isEmpty || legacyDestination != nil else { return [] }
+        let migrated = [SyncTask(name: "My Backup", sources: legacySources, destination: legacyDestination)]
+        saveTasks(migrated)
+        return migrated
+    }
+
+    static func saveTasks(_ tasks: [SyncTask]) {
+        ensureConfigFilesExist()
+        guard let data = try? JSONEncoder().encode(tasks) else { return }
+        try? data.write(to: tasksFile)
+    }
+
+    // MARK: - Legacy single-task config (dirs.list / settings.conf), read-only
+
+    private static func loadLegacySources() -> [String] {
         guard let text = try? String(contentsOf: dirsFile, encoding: .utf8) else { return [] }
         return text
             .split(separator: "\n", omittingEmptySubsequences: true)
@@ -34,15 +54,7 @@ enum ConfigIO {
             .filter { !$0.isEmpty }
     }
 
-    static func saveSources(_ sources: [String]) {
-        ensureConfigFilesExist()
-        let text = sources.joined(separator: "\n") + (sources.isEmpty ? "" : "\n")
-        try? text.write(to: dirsFile, atomically: true, encoding: .utf8)
-    }
-
-    // MARK: - Destination (settings.conf, shell-style DEST_ROOT="...")
-
-    static func loadDestination() -> String? {
+    private static func loadLegacyDestination() -> String? {
         guard let text = try? String(contentsOf: confFile, encoding: .utf8) else { return nil }
         for line in text.split(separator: "\n") {
             let trimmed = line.trimmingCharacters(in: .whitespaces)
@@ -54,18 +66,6 @@ enum ConfigIO {
             return value.isEmpty ? nil : value
         }
         return nil
-    }
-
-    static func saveDestination(_ path: String) {
-        ensureConfigFilesExist()
-        let existing = (try? String(contentsOf: confFile, encoding: .utf8)) ?? ""
-        let keptLines = existing
-            .split(separator: "\n", omittingEmptySubsequences: false)
-            .filter { !$0.trimmingCharacters(in: .whitespaces).hasPrefix("DEST_ROOT=") }
-        var lines = keptLines.map(String.init)
-        lines.append("DEST_ROOT=\"\(path)\"")
-        let text = lines.joined(separator: "\n") + "\n"
-        try? text.write(to: confFile, atomically: true, encoding: .utf8)
     }
 
     // MARK: - Log
