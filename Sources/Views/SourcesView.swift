@@ -5,7 +5,7 @@ struct TaskSourcesView: View {
     let taskID: UUID
     @EnvironmentObject private var store: BackupStore
 
-    private var sources: [String] {
+    private var sources: [SourceEntry] {
         store.tasks.first(where: { $0.id == taskID })?.sources ?? []
     }
 
@@ -19,10 +19,22 @@ struct TaskSourcesView: View {
                 )
             } else {
                 List {
-                    ForEach(sources, id: \.self) { path in
-                        Label(path, systemImage: "folder")
-                            .lineLimit(1)
-                            .truncationMode(.middle)
+                    ForEach(sources) { entry in
+                        HStack {
+                            Label(entry.path, systemImage: "folder")
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                            Spacer()
+                            Picker("", selection: Binding(
+                                get: { entry.copyMode },
+                                set: { store.setCopyMode($0, forSource: entry.id, in: taskID) }
+                            )) {
+                                Text("Contents Only").tag(CopyMode.contentsOnly)
+                                Text("Folder + Contents").tag(CopyMode.folderAndContents)
+                            }
+                            .labelsHidden()
+                            .frame(width: 190)
+                        }
                     }
                     .onDelete { offsets in
                         store.removeSources(at: offsets, from: taskID)
@@ -30,6 +42,10 @@ struct TaskSourcesView: View {
                 }
                 .listStyle(.inset)
                 .frame(minHeight: 200)
+
+                Text("Contents Only copies what's inside the folder straight into the destination. Folder + Contents copies the folder itself as a subfolder there, so sources with same-named files don't collide.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
             }
 
             HStack {

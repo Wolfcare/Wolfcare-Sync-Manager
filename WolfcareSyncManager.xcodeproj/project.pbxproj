@@ -24,6 +24,7 @@
 		ABD3BC2650154F48669B4B6C /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28493432E086A15C39C44120 /* MenuBarContentView.swift */; };
 		AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */; };
 		B5509C2A11342F77B4BD7FFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51007B7A00BD6AFB12EDF147 /* Assets.xcassets */; };
+		BBF90D63471334B3925193B0 /* SourceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E2624ACE54C88A943B87DA /* SourceEntry.swift */; };
 		E75E31E47AB35EB4BC91C9EC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D9C560A9C0750EB320CD5 /* main.swift */; };
 		F59ABBE0C1E38B587045D6C7 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7755E7EBBB00C70958EA258 /* LogView.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +43,7 @@
 		84FB031BFAFD8830E428ACBA /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
 		989D9C560A9C0750EB320CD5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAgentManager.swift; sourceTree = "<group>"; };
+		A8E2624ACE54C88A943B87DA /* SourceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEntry.swift; sourceTree = "<group>"; };
 		C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStore.swift; sourceTree = "<group>"; };
 		D7755E7EBBB00C70958EA258 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
 		E2D705F0DFD1D885A9AE84F7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */,
 				F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */,
 				EB077A4A627D6191A9271C64 /* ScheduleKind.swift */,
+				A8E2624ACE54C88A943B87DA /* SourceEntry.swift */,
 				43679D532023BC3C0198A85C /* SyncTask.swift */,
 			);
 			path = Models;
@@ -208,6 +211,7 @@
 				416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */,
 				7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */,
 				468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */,
+				BBF90D63471334B3925193B0 /* SourceEntry.swift in Sources */,
 				9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */,
 				A83BF0AF087C77E5DB857156 /* SyncTask.swift in Sources */,
 				4AC23E19838F52944991A5C0 /* TaskDetailView.swift in Sources */,

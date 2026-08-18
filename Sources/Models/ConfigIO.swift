@@ -33,7 +33,11 @@ enum ConfigIO {
         let legacySources = loadLegacySources()
         let legacyDestination = loadLegacyDestination()
         guard !legacySources.isEmpty || legacyDestination != nil else { return [] }
-        let migrated = [SyncTask(name: "My Backup", sources: legacySources, destination: legacyDestination)]
+        let migrated = [SyncTask(
+            name: "My Backup",
+            sources: legacySources.map { SourceEntry(path: $0, copyMode: .contentsOnly) },
+            destination: legacyDestination
+        )]
         saveTasks(migrated)
         return migrated
     }

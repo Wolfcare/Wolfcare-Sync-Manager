@@ -79,16 +79,24 @@ final class BackupStore: ObservableObject {
         guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         var resolved = path
         if resolved.hasSuffix("/") { resolved.removeLast() }
-        guard !resolved.isEmpty, !tasks[index].sources.contains(resolved) else { return }
+        guard !resolved.isEmpty, !tasks[index].sources.contains(where: { $0.path == resolved }) else { return }
         var isDir: ObjCBool = false
         guard FileManager.default.fileExists(atPath: resolved, isDirectory: &isDir), isDir.boolValue else { return }
-        tasks[index].sources.append(resolved)
+        tasks[index].sources.append(SourceEntry(path: resolved))
         persist()
     }
 
     func removeSources(at offsets: IndexSet, from taskID: UUID) {
         guard let index = tasks.firstIndex(where: { $0.id == taskID }) else { return }
         tasks[index].sources.remove(atOffsets: offsets)
+        persist()
+    }
+
+    func setCopyMode(_ mode: CopyMode, forSource sourceID: UUID, in taskID: UUID) {
+        guard let taskIndex = tasks.firstIndex(where: { $0.id == taskID }),
+              let sourceIndex = tasks[taskIndex].sources.firstIndex(where: { $0.id == sourceID })
+        else { return }
+        tasks[taskIndex].sources[sourceIndex].copyMode = mode
         persist()
     }
 

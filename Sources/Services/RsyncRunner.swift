@@ -24,7 +24,7 @@ enum RsyncRunner {
     /// Returns true only if every source directory synced without error.
     @discardableResult
     static func runBackup(
-        sources: [String],
+        sources: [SourceEntry],
         destinationRoot: String,
         log: (String) -> Void
     ) -> Bool {
@@ -35,25 +35,36 @@ enum RsyncRunner {
         log("===== Backup run started (\(timestamp)) =====")
         var allSucceeded = true
 
-        for src in sources {
+        for entry in sources {
+            let src = entry.path
             var isDir: ObjCBool = false
             guard FileManager.default.fileExists(atPath: src, isDirectory: &isDir), isDir.boolValue else {
                 log("SKIP (missing) \(src)")
                 continue
             }
 
-            let srcSlash = src.hasSuffix("/") ? src : src + "/"
             let destSlash = destinationRoot.hasSuffix("/") ? destinationRoot : destinationRoot + "/"
             try? FileManager.default.createDirectory(atPath: destinationRoot, withIntermediateDirectories: true)
 
-            log("Syncing \(srcSlash) -> \(destSlash)")
+            let rsyncSource: String
+            let modeDescription: String
+            switch entry.copyMode {
+            case .contentsOnly:
+                rsyncSource = src.hasSuffix("/") ? src : src + "/"
+                modeDescription = "contents only"
+            case .folderAndContents:
+                rsyncSource = src.hasSuffix("/") ? String(src.dropLast()) : src
+                modeDescription = "folder + contents"
+            }
+
+            log("Syncing \(rsyncSource) -> \(destSlash) [\(modeDescription)]")
 
             let process = Process()
             process.executableURL = URL(fileURLWithPath: rsyncPath)
             process.arguments = [
                 "-a", "-c", "--itemize-changes",
                 "--backup", "--backup-dir=\(versionRoot)",
-                srcSlash, destSlash
+                rsyncSource, destSlash
             ]
             let pipe = Pipe()
             process.standardOutput = pipe
