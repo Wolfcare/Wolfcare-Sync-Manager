@@ -23,14 +23,14 @@ struct MenuBarContentView: View {
             }
         }
 
-        Button("Open Wolfcare Sync Manager…") {
+        Button("Open Imitor Sync Manager…") {
             NSApp.activate(ignoringOtherApps: true)
             openWindow(id: "main")
         }
 
         Divider()
 
-        Button("Quit Wolfcare Sync Manager") {
+        Button("Quit Imitor Sync Manager") {
             NSApp.terminate(nil)
         }
     }

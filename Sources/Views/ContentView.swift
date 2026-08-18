@@ -29,7 +29,7 @@ struct ContentView: View {
                         .tag(Selection.activityLog)
                 }
             }
-            .navigationTitle("Wolfcare Sync Manager")
+            .navigationTitle("Imitor Sync Manager")
             .frame(minWidth: 200)
             .toolbar {
                 ToolbarItem {

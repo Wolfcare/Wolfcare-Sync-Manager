@@ -20,16 +20,26 @@ struct WolfcareSyncManagerApp: App {
             MenuBarContentView()
                 .environmentObject(store)
         } label: {
-            Image(systemName: menuBarIcon)
+            Image("MenuBarLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .overlay(alignment: .bottomTrailing) {
+                    if let badgeColor {
+                        Circle()
+                            .fill(badgeColor)
+                            .frame(width: 6, height: 6)
+                    }
+                }
         }
         .menuBarExtraStyle(.menu)
     }
 
-    private var menuBarIcon: String {
+    private var badgeColor: Color? {
         switch store.overallStatus {
-        case .running: return "arrow.triangle.2.circlepath"
-        case .failed: return "externaldrive.badge.exclamationmark"
-        default: return "externaldrive.badge.checkmark"
+        case .running: return .blue
+        case .failed: return .red
+        case .idle, .succeeded: return nil
         }
     }
 }

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+  <!-- Generator: Adobe Illustrator 30.7.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 114)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11 {
+        fill: none;
+      }
+
+      .st12, .st13 {
+        fill: #231f20;
+      }
+
+      .st14 {
+        fill: #ebebeb;
+      }
+
+      .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11 {
+        stroke-miterlimit: 4.07;
+      }
+
+      .st1, .st4, .st6, .st7, .st9, .st11 {
+        stroke-width: 51.49px;
+      }
+
+      .st1, .st10 {
+        stroke: #ebebeb;
+      }
+
+      .st2 {
+        stroke: #5a5f66;
+        stroke-width: 3px;
+      }
+
+      .st3 {
+        opacity: .43;
+        stroke: #141414;
+        stroke-width: 3.13px;
+      }
+
+      .st3, .st4, .st9, .st11 {
+        isolation: isolate;
+      }
+
+      .st4 {
+        opacity: .03;
+        stroke: #dbdbdc;
+      }
+
+      .st5 {
+        stroke: #969696;
+        stroke-width: 45.89px;
+      }
+
+      .st15 {
+        fill: #fff;
+      }
+
+      .st6 {
+        stroke: #7e7f81;
+      }
+
+      .st7 {
+        stroke: #aeb0b2;
+      }
+
+      .st8 {
+        stroke: #fff;
+        stroke-width: 5px;
+      }
+
+      .st9 {
+        opacity: .89;
+        stroke: #535456;
+      }
+
+      .st10 {
+        stroke-width: 6.25px;
+      }
+
+      .st13 {
+        stroke: #54567a;
+        stroke-width: 2px;
+      }
+
+      .st11 {
+        opacity: .46;
+        stroke: #686a6c;
+      }
+
+      .st16 {
+        fill: #1a1a1a;
+      }
+    </style>
+  </defs>
+  <rect class="st16" width="1024" height="1024" rx="229.38" ry="229.38"/>
+  <circle class="st10" cx="512" cy="512" r="417.18"/>
+  <g id="Squares">
+    <line id="_x36_" class="st4" x1="792.58" y1="639.03" x2="857.59" y2="668.15"/>
+    <line id="_x31_" class="st1" x1="746.89" y1="314.49" x2="801.33" y2="268.55"/>
+    <line id="_x32_" class="st7" x1="785.19" y1="371.85" x2="848.48" y2="339.17"/>
+    <line id="_x33_" class="st6" x1="809.76" y1="436.3" x2="878.73" y2="418.53"/>
+    <line id="_x34_" class="st9" x1="819.38" y1="504.59" x2="890.57" y2="502.62"/>
+    <line id="_x35_" class="st11" x1="813.55" y1="573.32" x2="883.4" y2="587.25"/>
+  </g>
+  <g>
+    <circle class="st14" cx="635.03" cy="543.47" r="2.12"/>
+    <circle class="st14" cx="622.69" cy="574.24" r="2.12"/>
+    <circle class="st14" cx="602.81" cy="600.77" r="2.12"/>
+    <circle class="st14" cx="576.74" cy="621.24" r="2.12"/>
+    <circle class="st14" cx="546.26" cy="634.28" r="2.12"/>
+    <circle class="st14" cx="513.44" cy="638.98" r="2.12"/>
+    <circle class="st14" cx="480.53" cy="635.03" r="2.12" transform="translate(-207.2633 1036.4037) rotate(-83.1512)"/>
+    <circle class="st14" cx="449.76" cy="622.69" r="2.12" transform="translate(-222.11 994.99) rotate(-83.15)"/>
+    <circle class="st14" cx="423.24" cy="602.81" r="2.12" transform="translate(-225.74 951.14) rotate(-83.15)"/>
+    <circle class="st14" cx="402.76" cy="576.74" r="2.12" transform="translate(-217.89 907.85) rotate(-83.15)"/>
+    <circle class="st14" cx="389.73" cy="546.26" r="2.12"/>
+    <circle class="st14" cx="385.03" cy="513.44" r="2.12"/>
+    <circle class="st14" cx="388.98" cy="480.53" r="2.12"/>
+    <circle class="st14" cx="401.32" cy="449.76" r="2.12"/>
+    <circle class="st14" cx="421.2" cy="423.24" r="2.12"/>
+    <circle class="st14" cx="447.26" cy="402.76" r="2.12"/>
+    <circle class="st14" cx="477.74" cy="389.73" r="2.12"/>
+    <circle class="st14" cx="510.56" cy="385.03" r="2.12"/>
+    <circle class="st14" cx="543.47" cy="388.98" r="2.12"/>
+    <circle class="st14" cx="574.24" cy="401.32" r="2.12"/>
+    <circle class="st14" cx="600.77" cy="421.2" r="2.12" transform="translate(110.93 967.45) rotate(-83.15)"/>
+    <circle class="st14" cx="621.24" cy="447.26" r="2.12" transform="translate(103.0882 1010.7403) rotate(-83.1512)"/>
+    <circle class="st14" cx="634.28" cy="477.74" r="2.12" transform="translate(84.3048 1050.5227) rotate(-83.1512)"/>
+    <circle class="st14" cx="638.98" cy="510.56" r="2.12" transform="translate(55.8627 1084.0945) rotate(-83.1512)"/>
+  </g>
+  <circle id="_xA7_" class="st5" cx="512" cy="512" r="69.08"/>
+  <circle id="_xA7_1" data-name="_xA7_" class="st5" cx="512" cy="512" r="268.66"/>
+  <circle id="_xA7_2" data-name="_xA7_" class="st5" cx="512" cy="512" r="268.66"/>
+  <circle class="st3" cx="512" cy="512" r="69.08"/>
+  <g>
+    <line class="st2" x1="405.65" y1="600.86" x2="270.01" y2="723.2"/>
+    <line class="st2" x1="415.75" y1="616.2" x2="299.75" y2="752.12"/>
+  </g>
+  <g>
+    <circle id="bottom" class="st15" cx="263.47" cy="756.97" r="40.22"/>
+    <circle id="bottom1" data-name="bottom" class="st12" cx="263.47" cy="756.97" r="36"/>
+  </g>
+  <g>
+    <circle id="bottom2" data-name="bottom" class="st15" cx="420.83" cy="600.35" r="18.14"/>
+    <circle id="bottom3" data-name="bottom" class="st12" cx="420.83" cy="600.35" r="16.24"/>
+  </g>
+  <circle class="st14" cx="512" cy="512" r="9.18"/>
+  <g>
+    <g>
+      <path class="st13" d="M135.25,709.62h57c7.73,0,14,6.42,14,14.35h0v42.02c0,31.13,24.62,56.37,55,56.37h36c7.73,0,14,6.42,14,14.35v43.04c0,7.92-6.27,14.35-14,14.35h-162c-7.73,0-14-6.42-14-14.35h0v-155.78c0-7.92,6.27-14.35,14-14.35Z"/>
+      <ellipse id="bottom4" data-name="bottom" class="st15" cx="164.5" cy="749.79" rx="18.14" ry="18.59"/>
+    </g>
+    <ellipse id="bottom5" data-name="bottom" class="st12" cx="164.5" cy="749.79" rx="16.24" ry="16.64"/>
+    <ellipse id="bottom6" data-name="bottom" class="st15" cx="270.71" cy="856.34" rx="18.14" ry="18.59"/>
+    <ellipse id="bottom7" data-name="bottom" class="st12" cx="270.71" cy="856.34" rx="16.24" ry="16.64"/>
+    <ellipse id="bottom8" data-name="bottom" class="st15" cx="164.5" cy="853.25" rx="18.14" ry="18.59"/>
+    <ellipse id="bottom9" data-name="bottom" class="st12" cx="164.5" cy="853.25" rx="16.24" ry="16.64"/>
+  </g>
+  <line class="st0" y1="1024" x2="1024" y2="0"/>
+  <line class="st8" x1="121.25" y1="959.52" x2="929.18" y2="954.19"/>
+  <line class="st8" x1="926.64" y1="683.19" x2="926.64" y2="956.34"/>
+</svg>
