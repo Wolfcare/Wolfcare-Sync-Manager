@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07D5B8D729607406A8C6DBEE /* BackupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */; };
+		3DBAB1DF73341414C5776320 /* LaunchAgentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */; };
+		416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361E04A59E6EC998D6035B01 /* RunBackupButton.swift */; };
+		468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */; };
+		5EAA2E34BE2817B5AF4ED5C7 /* HeadlessRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA8E553275C23641D861E5C /* HeadlessRunner.swift */; };
+		770C2A1966E0625E4489B74D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */; };
+		7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB077A4A627D6191A9271C64 /* ScheduleKind.swift */; };
+		90AD4031E85DCEFCED856D23 /* ConfigIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */; };
+		979FA4DC5A6EA133AD41B939 /* DestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC026D5D850A3E63A30C0A /* DestinationView.swift */; };
+		9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FB031BFAFD8830E428ACBA /* SourcesView.swift */; };
+		9C4FE61A4E1561EBE494A7C6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D705F0DFD1D885A9AE84F7 /* ContentView.swift */; };
+		9FE7C1418043A643EA304362 /* RsyncRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */; };
+		ABD3BC2650154F48669B4B6C /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28493432E086A15C39C44120 /* MenuBarContentView.swift */; };
+		AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */; };
+		B5509C2A11342F77B4BD7FFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51007B7A00BD6AFB12EDF147 /* Assets.xcassets */; };
+		E75E31E47AB35EB4BC91C9EC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D9C560A9C0750EB320CD5 /* main.swift */; };
+		F59ABBE0C1E38B587045D6C7 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7755E7EBBB00C70958EA258 /* LogView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolfcareSyncManagerApp.swift; sourceTree = "<group>"; };
+		12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		28493432E086A15C39C44120 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
+		2DB14C7B8C34CA5174D34133 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2DEC026D5D850A3E63A30C0A /* DestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationView.swift; sourceTree = "<group>"; };
+		361E04A59E6EC998D6035B01 /* RunBackupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBackupButton.swift; sourceTree = "<group>"; };
+		4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RsyncRunner.swift; sourceTree = "<group>"; };
+		51007B7A00BD6AFB12EDF147 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		84FB031BFAFD8830E428ACBA /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
+		989D9C560A9C0750EB320CD5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAgentManager.swift; sourceTree = "<group>"; };
+		C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStore.swift; sourceTree = "<group>"; };
+		D7755E7EBBB00C70958EA258 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		E2D705F0DFD1D885A9AE84F7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		E70EF279D527BA4E9A066872 /* WolfcareSyncManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WolfcareSyncManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleView.swift; sourceTree = "<group>"; };
+		EB077A4A627D6191A9271C64 /* ScheduleKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduleKind.swift; sourceTree = "<group>"; };
+		EEA8E553275C23641D861E5C /* HeadlessRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadlessRunner.swift; sourceTree = "<group>"; };
+		F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigIO.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		16692CCFF3B7102260F42C71 = {
+			isa = PBXGroup;
+			children = (
+				47330CA89E1BB2923B6B4897 /* Sources */,
+				9E56822F3B91DE5279E8D346 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		173E6FA705CD4CC61F14626E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E2D705F0DFD1D885A9AE84F7 /* ContentView.swift */,
+				2DEC026D5D850A3E63A30C0A /* DestinationView.swift */,
+				D7755E7EBBB00C70958EA258 /* LogView.swift */,
+				28493432E086A15C39C44120 /* MenuBarContentView.swift */,
+				361E04A59E6EC998D6035B01 /* RunBackupButton.swift */,
+				E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */,
+				84FB031BFAFD8830E428ACBA /* SourcesView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		47330CA89E1BB2923B6B4897 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				55520A44EB38CC6CA4901B66 /* App */,
+				B80AAFE283A71217C1DF6809 /* Models */,
+				74E5806BB39F3C0426608C72 /* Services */,
+				173E6FA705CD4CC61F14626E /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		55520A44EB38CC6CA4901B66 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */,
+				51007B7A00BD6AFB12EDF147 /* Assets.xcassets */,
+				2DB14C7B8C34CA5174D34133 /* Info.plist */,
+				989D9C560A9C0750EB320CD5 /* main.swift */,
+				07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		74E5806BB39F3C0426608C72 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				EEA8E553275C23641D861E5C /* HeadlessRunner.swift */,
+				9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */,
+				4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		9E56822F3B91DE5279E8D346 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E70EF279D527BA4E9A066872 /* WolfcareSyncManager.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B80AAFE283A71217C1DF6809 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */,
+				F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */,
+				EB077A4A627D6191A9271C64 /* ScheduleKind.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8410890D48BCBC44FE0C57C4 /* WolfcareSyncManager */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF2B238DC661F1719D3422C2 /* Build configuration list for PBXNativeTarget "WolfcareSyncManager" */;
+			buildPhases = (
+				A9DBBF2C7AF4E662B9DB31DD /* Sources */,
+				1C813EDB04E7D5FD3016336D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WolfcareSyncManager;
+			packageProductDependencies = (
+			);
+			productName = WolfcareSyncManager;
+			productReference = E70EF279D527BA4E9A066872 /* WolfcareSyncManager.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E09C8049DB8C511049C608FC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 09BEF7D7C80BD6DF7C74C0B8 /* Build configuration list for PBXProject "WolfcareSyncManager" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 16692CCFF3B7102260F42C71;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 9E56822F3B91DE5279E8D346 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8410890D48BCBC44FE0C57C4 /* WolfcareSyncManager */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1C813EDB04E7D5FD3016336D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5509C2A11342F77B4BD7FFA /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A9DBBF2C7AF4E662B9DB31DD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				770C2A1966E0625E4489B74D /* AppDelegate.swift in Sources */,
+				07D5B8D729607406A8C6DBEE /* BackupStore.swift in Sources */,
+				90AD4031E85DCEFCED856D23 /* ConfigIO.swift in Sources */,
+				9C4FE61A4E1561EBE494A7C6 /* ContentView.swift in Sources */,
+				979FA4DC5A6EA133AD41B939 /* DestinationView.swift in Sources */,
+				5EAA2E34BE2817B5AF4ED5C7 /* HeadlessRunner.swift in Sources */,
+				3DBAB1DF73341414C5776320 /* LaunchAgentManager.swift in Sources */,
+				F59ABBE0C1E38B587045D6C7 /* LogView.swift in Sources */,
+				ABD3BC2650154F48669B4B6C /* MenuBarContentView.swift in Sources */,
+				9FE7C1418043A643EA304362 /* RsyncRunner.swift in Sources */,
+				416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */,
+				7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */,
+				468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */,
+				9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */,
+				AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */,
+				E75E31E47AB35EB4BC91C9EC /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		88431C6ABD9B6D4B67EA1991 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		8B50B7DD22A6A7CBE1126077 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B02D4E31D5BE2DFDE6396A14 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Sources/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wolfcare.SyncManager;
+				PRODUCT_NAME = "Wolfcare Sync Manager";
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D1742E668ADE00AD23A1E291 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Sources/App/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wolfcare.SyncManager;
+				PRODUCT_NAME = "Wolfcare Sync Manager";
+				SDKROOT = macosx;
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		09BEF7D7C80BD6DF7C74C0B8 /* Build configuration list for PBXProject "WolfcareSyncManager" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8B50B7DD22A6A7CBE1126077 /* Debug */,
+				88431C6ABD9B6D4B67EA1991 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CF2B238DC661F1719D3422C2 /* Build configuration list for PBXNativeTarget "WolfcareSyncManager" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D1742E668ADE00AD23A1E291 /* Debug */,
+				B02D4E31D5BE2DFDE6396A14 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E09C8049DB8C511049C608FC /* Project object */;
+}
