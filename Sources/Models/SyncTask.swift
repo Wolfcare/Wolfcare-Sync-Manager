@@ -38,7 +38,7 @@ extension SyncTask: Codable {
         schedule = try container.decode(ScheduleKind.self, forKey: .schedule)
 
         // Sources used to be a plain [String] of paths; migrate those to
-        // SourceEntry (defaulting to the original contents-only behavior)
+        // SourceEntry (defaulting to the original contents-only behaviour)
         // if the new [SourceEntry] shape doesn't decode.
         if let entries = try? container.decode([SourceEntry].self, forKey: .sources) {
             sources = entries

@@ -49,7 +49,7 @@ Script written by Santo Berlin © 2026. GUI written by Wolfcare © 2026.
 The app was written through an iterative, conversational process rather than a single spec-and-build pass — starting from a single-task GUI wrapper around the bash script's logic, then expanding to independent multi-task support, per-source copy modes, inline renaming, and run-status feedback, with each change built and functionally tested before moving to the next.
 
 - **SwiftUI**, targeting macOS 13+, with the project structure generated via **XcodeGen** from `project.yml` rather than a hand-edited `.xcodeproj`.
-- Backup logic was verified **headlessly** first — invoking the compiled binary directly with `--run <task-id>` against scratch test folders — to confirm `rsync` behavior, versioning, and multi-task isolation before the GUI was ever involved.
+- Backup logic was verified **headlessly** first — invoking the compiled binary directly with `--run <task-id>` against scratch test folders — to confirm `rsync` behaviour, versioning, and multi-task isolation before the GUI was ever involved.
 - Config storage intentionally mirrors the original bash script's format where possible, with automatic migration for anyone still holding old-format data.
 - The app icon is generated from a vector source (`Design/imitor_icon.svg`) into the full macOS icon set and a dedicated menu bar glyph.
 
