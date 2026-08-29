@@ -18,6 +18,13 @@ struct WolfcareSyncManagerApp: App {
             ContentView()
                 .environmentObject(store)
                 .environmentObject(store.progressTracker)
+                // The chrome-on-charcoal look uses fixed colors, not adaptive
+                // ones — it's a deliberate brand identity, not meant to follow
+                // system appearance. Without this, native controls (toolbar,
+                // window chrome, default buttons/pickers) still follow the
+                // system's actual Light/Dark setting, clashing badly with the
+                // fixed-dark custom views on a Mac set to Light Mode.
+                .preferredColorScheme(.dark)
         }
         .windowResizability(.contentSize)
         .commands {
@@ -27,6 +34,8 @@ struct WolfcareSyncManagerApp: App {
         MenuBarExtra {
             MenuBarContentView()
                 .environmentObject(store)
+                .environmentObject(store.progressTracker)
+                .preferredColorScheme(.dark)
         } label: {
             Image(nsImage: menuBarIcon.image)
                 .resizable()

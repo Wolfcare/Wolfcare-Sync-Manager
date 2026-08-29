@@ -17,17 +17,31 @@ enum FullDiskAccessChecker {
     }
 
     /// Display names of currently mounted volumes (internal, external, network)
-    /// this process cannot actually list the contents of right now.
-    static func unreadableMountedVolumeNames() -> [String] {
+    /// this process cannot actually list the contents of right now. Each volume
+    /// is probed with a timeout so a stale/unresponsive network mount can't hang
+    /// the whole check — a volume that doesn't answer in time is skipped rather
+    /// than flagged, since an unresponsive mount isn't necessarily a permissions problem.
+    static func unreadableMountedVolumeNames(perVolumeTimeout: TimeInterval = 3) -> [String] {
         guard let urls = FileManager.default.mountedVolumeURLs(
             includingResourceValuesForKeys: [.volumeNameKey],
             options: [.skipHiddenVolumes]
         ) else { return [] }
 
-        return urls.compactMap { url in
-            let name = (try? url.resourceValues(forKeys: [.volumeNameKey]))?.volumeName ?? url.lastPathComponent
-            let readable = (try? FileManager.default.contentsOfDirectory(atPath: url.path)) != nil
-            return readable ? nil : name
+        return urls.compactMap { url -> String? in
+            guard let readable = isReadable(url.path, timeout: perVolumeTimeout), !readable else { return nil }
+            return (try? url.resourceValues(forKeys: [.volumeNameKey]))?.volumeName ?? url.lastPathComponent
         }
+    }
+
+    /// nil means "didn't answer within the timeout" — inconclusive, not a denial.
+    private static func isReadable(_ path: String, timeout: TimeInterval) -> Bool? {
+        let semaphore = DispatchSemaphore(value: 0)
+        var result: Bool?
+        DispatchQueue.global(qos: .utility).async {
+            result = (try? FileManager.default.contentsOfDirectory(atPath: path)) != nil
+            semaphore.signal()
+        }
+        guard semaphore.wait(timeout: .now() + timeout) == .success else { return nil }
+        return result
     }
 }

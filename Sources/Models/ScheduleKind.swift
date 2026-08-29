@@ -8,6 +8,7 @@ enum ScheduleKind: Equatable, Codable {
     case daily(hour: Int, minute: Int)
     case weekly(weekday: Int, hour: Int, minute: Int) // weekday: 0/7 = Sunday, matches launchd
     case everyNMinutes(Int)
+    case once(Date)
 
     var summary: String {
         switch self {
@@ -23,6 +24,11 @@ enum ScheduleKind: Equatable, Codable {
             return String(format: "Every %@ at %02d:%02d", name, hour, minute)
         case .everyNMinutes(let n):
             return "Every \(n) minute\(n == 1 ? "" : "s")"
+        case .once(let date):
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            return "Once on \(formatter.string(from: date))"
         }
     }
 }

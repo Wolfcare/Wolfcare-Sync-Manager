@@ -20,6 +20,30 @@ enum RsyncRunner {
         }
     }
 
+    /// Collects the first few warning/error lines rsync prints (permission
+    /// denied, vanished files, etc.) during a run, so the UI can show *why*
+    /// a task failed without the user having to dig through the raw log —
+    /// which for a large sync can run to tens of thousands of lines.
+    final class WarningCollector {
+        private let lock = NSLock()
+        private var collected: [String] = []
+
+        var warnings: [String] {
+            lock.lock(); defer { lock.unlock() }
+            return collected
+        }
+
+        func add(_ warning: String) {
+            lock.lock(); defer { lock.unlock() }
+            guard collected.count < 3, !collected.contains(warning) else { return }
+            collected.append(warning)
+        }
+    }
+
+    private static func looksLikeWarningLine(_ line: String) -> Bool {
+        line.contains("warning:") || line.contains("rsync error") || line.lowercased().contains("permission denied")
+    }
+
     static func locateRsyncExecutable() -> String {
         // Prefer a Homebrew-installed rsync (3.1+) when present: it supports
         // --info=progress2, which is what makes the aggregate progress bar
@@ -50,6 +74,7 @@ enum RsyncRunner {
         destinationRoot: String,
         handle: RunHandle? = nil,
         onProgress: ((SyncProgress) -> Void)? = nil,
+        warningCollector: WarningCollector? = nil,
         log: (String) -> Void
     ) -> Bool {
         let rsyncPath = locateRsyncExecutable()
@@ -67,8 +92,12 @@ enum RsyncRunner {
         }
 
         log("Calculating sync size…")
-        let perSourceBytes = eligibleSources.map { entry in
-            estimateTransferBytes(for: entry, destSlash: destSlash, rsyncPath: rsyncPath)
+        // Wired to `handle` (not just the real transfers below) so Pause/Stop take
+        // effect immediately even while this scan is still running — it uses -c
+        // (checksum) comparison, which can take real time on large existing trees.
+        let perSourceBytes = eligibleSources.map { entry -> Int64 in
+            guard handle?.isCancelled != true else { return 0 }
+            return estimateTransferBytes(for: entry, destSlash: destSlash, rsyncPath: rsyncPath, handle: handle)
         }
         let totalBytes = perSourceBytes.reduce(0, +)
         let useProgress2 = supportsProgress2(rsyncPath: rsyncPath)
@@ -148,6 +177,9 @@ enum RsyncRunner {
                 outputBuffer.append(data)
                 for line in extractLines(from: &outputBuffer) {
                     guard !line.isEmpty else { continue }
+                    if looksLikeWarningLine(line) {
+                        warningCollector?.add(line)
+                    }
                     if let bytes = parseProgressBytes(line) {
                         currentFileBytes = bytes
                         postProgress(sourceCompletedFilesBytes + currentFileBytes)
@@ -216,7 +248,7 @@ enum RsyncRunner {
     /// Dry-runs one source through rsync with `--stats` to find out how many bytes
     /// it would actually transfer (honoring the same checksum comparison and
     /// versioning args as the real run), without writing anything.
-    private static func estimateTransferBytes(for entry: SourceEntry, destSlash: String, rsyncPath: String) -> Int64 {
+    private static func estimateTransferBytes(for entry: SourceEntry, destSlash: String, rsyncPath: String, handle: RunHandle?) -> Int64 {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: rsyncPath)
         process.arguments = ["-a", "-c", "--dry-run", "--stats", rsyncSourcePath(for: entry), destSlash]
@@ -225,8 +257,10 @@ enum RsyncRunner {
         process.standardError = Pipe()
         do {
             try process.run()
+            handle?.attach(process)
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             process.waitUntilExit()
+            handle?.detach()
             guard let text = String(data: data, encoding: .utf8) else { return 0 }
             return parseTotalTransferSize(from: text)
         } catch {

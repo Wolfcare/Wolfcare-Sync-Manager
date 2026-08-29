@@ -13,19 +13,43 @@ struct TaskSourcesView: View {
         VStack(alignment: .leading, spacing: 12) {
             Group {
                 if sources.isEmpty {
-                    ContentUnavailableViewCompat(
-                        title: "No directories configured yet",
-                        message: "Add a folder to include it in this task's backups.",
-                        systemImage: "folder.badge.plus"
-                    )
-                    .frame(minHeight: 200)
+                    VStack(spacing: 14) {
+                        ContentUnavailableViewCompat(
+                            title: "No directories configured yet",
+                            message: "Add a folder to include it in this task's backups.",
+                            systemImage: "folder.badge.plus"
+                        )
+                        Button {
+                            chooseDirectories()
+                        } label: {
+                            Label("Add Directory…", systemImage: "plus")
+                        }
+                        .buttonStyle(.chrome)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 200)
                 } else {
                     List {
                         ForEach(sources) { entry in
                             HStack {
-                                Label(entry.path, systemImage: "folder")
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
+                                Button {
+                                    changeSource(entry)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        HStack {
+                                            Image(systemName: "folder")
+                                                .font(.system(size: 13 * 1.2))
+                                            Text(entry.path)
+                                                .lineLimit(1)
+                                                .truncationMode(.middle)
+                                        }
+                                        .foregroundStyle(Theme.highlight1)
+                                        Text("Click folder icon to change source")
+                                            .font(.caption2)
+                                            .foregroundStyle(Theme.gray2)
+                                    }
+                                }
+                                .buttonStyle(.plain)
+                                .help("Change this source's folder")
                                 Spacer()
                                 Picker("", selection: Binding(
                                     get: { entry.copyMode },
@@ -56,19 +80,35 @@ struct TaskSourcesView: View {
             if !sources.isEmpty {
                 Text("Contents Only copies what's inside the folder straight into the destination. Folder + Contents copies the folder itself as a subfolder there, so sources with same-named files don't collide.")
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.gray2)
             }
 
-            HStack {
-                Button {
-                    chooseDirectories()
-                } label: {
-                    Label("Add Directory…", systemImage: "plus")
+            if !sources.isEmpty {
+                HStack {
+                    Button {
+                        chooseDirectories()
+                    } label: {
+                        Label("Add Directory…", systemImage: "plus")
+                    }
+                    .buttonStyle(.chrome)
+                    Spacer()
+                    Text("\(sources.count) director\(sources.count == 1 ? "y" : "ies")")
+                        .foregroundStyle(Theme.gray2)
                 }
-                Spacer()
-                Text("\(sources.count) director\(sources.count == 1 ? "y" : "ies")")
-                    .foregroundStyle(.secondary)
             }
+        }
+    }
+
+    private func changeSource(_ entry: SourceEntry) {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Change"
+        panel.message = "Choose a new folder for this source"
+        panel.directoryURL = URL(fileURLWithPath: entry.path)
+        if panel.runModal() == .OK, let url = panel.url {
+            store.replaceSourcePath(entry.id, in: taskID, with: url.path)
         }
     }
 
@@ -98,12 +138,13 @@ struct ContentUnavailableViewCompat: View {
         VStack(spacing: 8) {
             Image(systemName: systemImage)
                 .font(.system(size: 36))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
             Text(title)
                 .font(.headline)
+                .foregroundStyle(Theme.highlight1)
             Text(message)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
         }
         .frame(maxWidth: .infinity, minHeight: 160)
         .multilineTextAlignment(.center)

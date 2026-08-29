@@ -12,6 +12,7 @@
 		325BAA6B32D4E0AB9FF04E5B /* ImitorIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003D4AFF179F7705FF8BA858 /* ImitorIconView.swift */; };
 		3DBAB1DF73341414C5776320 /* LaunchAgentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */; };
 		416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 361E04A59E6EC998D6035B01 /* RunBackupButton.swift */; };
+		41BC91D7872C4CBC63817D38 /* WalkthroughView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAA1E324D27B38B808DD469 /* WalkthroughView.swift */; };
 		468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */; };
 		4AC23E19838F52944991A5C0 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB2EAFD4F5170284EEA471 /* TaskDetailView.swift */; };
 		5EAA2E34BE2817B5AF4ED5C7 /* HeadlessRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA8E553275C23641D861E5C /* HeadlessRunner.swift */; };
@@ -27,16 +28,21 @@
 		A83BF0AF087C77E5DB857156 /* SyncTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43679D532023BC3C0198A85C /* SyncTask.swift */; };
 		ABD3BC2650154F48669B4B6C /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28493432E086A15C39C44120 /* MenuBarContentView.swift */; };
 		AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */; };
+		B29FFCC0AFF142040245FC43 /* TaskSummaryComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB538528A92B1B9E8727A4AD /* TaskSummaryComponents.swift */; };
 		B5509C2A11342F77B4BD7FFA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 51007B7A00BD6AFB12EDF147 /* Assets.xcassets */; };
 		BBF90D63471334B3925193B0 /* SourceEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E2624ACE54C88A943B87DA /* SourceEntry.swift */; };
+		C305060E657601F5CEDDB5D4 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EF2DA7F1D6C8C1F3397A89D /* UpdateChecker.swift */; };
+		C68B6BE52A00E9FFA270B4D8 /* ScheduledRunBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897F2AA15F06A12B386D2C97 /* ScheduledRunBridge.swift */; };
 		E75E31E47AB35EB4BC91C9EC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 989D9C560A9C0750EB320CD5 /* main.swift */; };
 		EE27EEE5C76532DDF46DE3CD /* MenuBarIconRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A21081CC541C57F00932260 /* MenuBarIconRenderer.swift */; };
+		F31D1D05F356C26DC2ECEE61 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69F7C1904FFC184FBCC3E908 /* Theme.swift */; };
 		F59ABBE0C1E38B587045D6C7 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7755E7EBBB00C70958EA258 /* LogView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		003D4AFF179F7705FF8BA858 /* ImitorIconView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImitorIconView.swift; sourceTree = "<group>"; };
 		07BC8732A1B49A81361F2C6A /* WolfcareSyncManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WolfcareSyncManagerApp.swift; sourceTree = "<group>"; };
+		0DAA1E324D27B38B808DD469 /* WalkthroughView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkthroughView.swift; sourceTree = "<group>"; };
 		12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		28493432E086A15C39C44120 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
 		2DB14C7B8C34CA5174D34133 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -47,14 +53,18 @@
 		4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RsyncRunner.swift; sourceTree = "<group>"; };
 		51007B7A00BD6AFB12EDF147 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51BB2EAFD4F5170284EEA471 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		69F7C1904FFC184FBCC3E908 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		722DFB000CB84B522B08FCB7 /* RunHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunHandle.swift; sourceTree = "<group>"; };
+		7EF2DA7F1D6C8C1F3397A89D /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 		84FB031BFAFD8830E428ACBA /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
+		897F2AA15F06A12B386D2C97 /* ScheduledRunBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledRunBridge.swift; sourceTree = "<group>"; };
 		8A21081CC541C57F00932260 /* MenuBarIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconRenderer.swift; sourceTree = "<group>"; };
 		989D9C560A9C0750EB320CD5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAgentManager.swift; sourceTree = "<group>"; };
 		A513E475DD13A47FE64331B9 /* SyncProgressTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncProgressTracker.swift; sourceTree = "<group>"; };
 		A8E2624ACE54C88A943B87DA /* SourceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEntry.swift; sourceTree = "<group>"; };
 		C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStore.swift; sourceTree = "<group>"; };
+		CB538528A92B1B9E8727A4AD /* TaskSummaryComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSummaryComponents.swift; sourceTree = "<group>"; };
 		D7755E7EBBB00C70958EA258 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
 		E2D705F0DFD1D885A9AE84F7 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E70EF279D527BA4E9A066872 /* WolfcareSyncManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WolfcareSyncManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +95,9 @@
 				E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */,
 				84FB031BFAFD8830E428ACBA /* SourcesView.swift */,
 				51BB2EAFD4F5170284EEA471 /* TaskDetailView.swift */,
+				CB538528A92B1B9E8727A4AD /* TaskSummaryComponents.swift */,
+				69F7C1904FFC184FBCC3E908 /* Theme.swift */,
+				0DAA1E324D27B38B808DD469 /* WalkthroughView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -121,6 +134,8 @@
 				9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */,
 				4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */,
 				722DFB000CB84B522B08FCB7 /* RunHandle.swift */,
+				897F2AA15F06A12B386D2C97 /* ScheduledRunBridge.swift */,
+				7EF2DA7F1D6C8C1F3397A89D /* UpdateChecker.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -230,11 +245,16 @@
 				0583EB99874E0DECAD1D1C2F /* RunHandle.swift in Sources */,
 				7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */,
 				468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */,
+				C68B6BE52A00E9FFA270B4D8 /* ScheduledRunBridge.swift in Sources */,
 				BBF90D63471334B3925193B0 /* SourceEntry.swift in Sources */,
 				9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */,
 				90A9F6818AF57E9A7F666595 /* SyncProgressTracker.swift in Sources */,
 				A83BF0AF087C77E5DB857156 /* SyncTask.swift in Sources */,
 				4AC23E19838F52944991A5C0 /* TaskDetailView.swift in Sources */,
+				B29FFCC0AFF142040245FC43 /* TaskSummaryComponents.swift in Sources */,
+				F31D1D05F356C26DC2ECEE61 /* Theme.swift in Sources */,
+				C305060E657601F5CEDDB5D4 /* UpdateChecker.swift in Sources */,
+				41BC91D7872C4CBC63817D38 /* WalkthroughView.swift in Sources */,
 				AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */,
 				E75E31E47AB35EB4BC91C9EC /* main.swift in Sources */,
 			);
@@ -367,7 +387,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 26;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -389,7 +409,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 26;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (

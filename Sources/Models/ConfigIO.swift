@@ -96,9 +96,14 @@ enum ConfigIO {
     }
 
     static func readRecentLogLines(limit: Int = 200) -> String {
-        guard let text = try? String(contentsOf: logFile, encoding: .utf8) else {
+        guard let data = try? Data(contentsOf: logFile) else {
             return "(no log yet)"
         }
+        // Lossy-decode rather than strict UTF-8: a single stray byte anywhere
+        // in the file (e.g. a legacy-encoded filename echoed verbatim from a
+        // network share's rsync output) would otherwise fail the whole read
+        // and silently show "(no log yet)" despite the file having content.
+        let text = String(decoding: data, as: UTF8.self)
         let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
         let tail = lines.suffix(limit)
         return tail.joined(separator: "\n")

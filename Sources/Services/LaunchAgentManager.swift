@@ -8,6 +8,17 @@ import Darwin
 /// Access/permission quirks the script itself warns about).
 enum LaunchAgentManager {
 
+    struct LaunchctlError: LocalizedError {
+        let exitCode: Int32
+        let output: String
+        var errorDescription: String? {
+            let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty
+                ? "launchctl exited with status \(exitCode)."
+                : "launchctl exited with status \(exitCode): \(trimmed)"
+        }
+    }
+
     private static func label(for taskID: UUID) -> String {
         "com.wolfcare.syncmanager.backup.\(taskID.uuidString.lowercased())"
     }
@@ -43,6 +54,15 @@ enum LaunchAgentManager {
             plist["StartCalendarInterval"] = ["Weekday": weekday, "Hour": hour, "Minute": minute]
         case .everyNMinutes(let n):
             plist["StartInterval"] = max(60, n * 60)
+        case .once(let date):
+            let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+            plist["StartCalendarInterval"] = [
+                "Year": components.year ?? 0,
+                "Month": components.month ?? 1,
+                "Day": components.day ?? 1,
+                "Hour": components.hour ?? 0,
+                "Minute": components.minute ?? 0,
+            ]
         }
 
         let url = plistURL(for: taskID)
@@ -53,7 +73,17 @@ enum LaunchAgentManager {
         )
         try data.write(to: url)
 
-        try runLaunchctl(["bootstrap", "gui/\(getuid())", url.path])
+        let (exitCode, output) = try runLaunchctl(["bootstrap", "gui/\(getuid())", url.path])
+        guard exitCode == 0 else {
+            // Bootstrap failed (e.g. a stale registration under the same
+            // label, a rejected/unsigned executable, …) — without this check
+            // the plist still gets written to disk and looks configured in
+            // the UI, but launchd never actually schedules it, so it just
+            // silently never fires. Clean up the orphaned plist rather than
+            // leaving a schedule on disk that isn't actually registered.
+            try? FileManager.default.removeItem(at: url)
+            throw LaunchctlError(exitCode: exitCode, output: output)
+        }
     }
 
     static func remove(taskID: UUID) throws {
@@ -75,6 +105,17 @@ enum LaunchAgentManager {
             let hour = calendar["Hour"]
             let minute = calendar["Minute"] ?? 0
             let weekday = calendar["Weekday"]
+            if let year = calendar["Year"], let month = calendar["Month"], let day = calendar["Day"] {
+                var components = DateComponents()
+                components.year = year
+                components.month = month
+                components.day = day
+                components.hour = hour ?? 0
+                components.minute = minute
+                if let date = Calendar.current.date(from: components) {
+                    return .once(date)
+                }
+            }
             if let weekday {
                 return .weekly(weekday: weekday, hour: hour ?? 0, minute: minute)
             }
@@ -89,7 +130,7 @@ enum LaunchAgentManager {
     }
 
     @discardableResult
-    private static func runLaunchctl(_ arguments: [String]) throws -> Int32 {
+    private static func runLaunchctl(_ arguments: [String]) throws -> (exitCode: Int32, output: String) {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
         process.arguments = arguments
@@ -97,7 +138,9 @@ enum LaunchAgentManager {
         process.standardOutput = pipe
         process.standardError = pipe
         try process.run()
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
         process.waitUntilExit()
-        return process.terminationStatus
+        let output = String(data: data, encoding: .utf8) ?? ""
+        return (process.terminationStatus, output)
     }
 }

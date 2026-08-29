@@ -5,20 +5,25 @@ struct RunTaskButton: View {
     @EnvironmentObject private var store: BackupStore
 
     var body: some View {
-        Button {
-            store.runTaskNow(taskID)
-        } label: {
-            if store.runStatus(for: taskID) == .running {
+        if store.runStatus(for: taskID) == .running {
+            Button {
+                store.runTaskNow(taskID)
+            } label: {
                 ProgressView()
                     .controlSize(.small)
-                    .scaleEffect(2)
                     .frame(width: 34, height: 34)
-            } else {
-                Label("Run Now", systemImage: "arrow.triangle.2.circlepath")
+                    .background(Theme.chromeFill, in: Circle())
+                    .overlay(Circle().strokeBorder(.white.opacity(0.08), lineWidth: 1))
             }
+            .buttonStyle(.plain)
+            .disabled(true)
+        } else {
+            ChromeIconButton(systemImage: "arrow.triangle.2.circlepath") {
+                store.runTaskNow(taskID)
+            }
+            .disabled(!store.canRunTask(taskID))
+            .opacity(store.canRunTask(taskID) ? 1 : 0.4)
+            .help(store.canRunTask(taskID) ? "Run this backup now" : "Add a source and a reachable destination first")
         }
-        .font(.system(size: 26))
-        .disabled(!store.canRunTask(taskID))
-        .help(store.canRunTask(taskID) ? "Run this backup now" : "Add a source and a reachable destination first")
     }
 }

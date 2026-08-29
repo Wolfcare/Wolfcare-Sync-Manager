@@ -82,15 +82,7 @@ public final class SquaresRotation: ObservableObject {
 private let designSize: CGFloat = 1024
 private let designCenter = CGPoint(x: 512, y: 512)
 
-private extension Color {
-    /// `Color(hex: 0xEBEBEB)`
-    init(hex: UInt32) {
-        self.init(.sRGB,
-                  red:   Double((hex >> 16) & 0xFF) / 255,
-                  green: Double((hex >> 8)  & 0xFF) / 255,
-                  blue:  Double( hex        & 0xFF) / 255)
-    }
-}
+// Color(hex:) lives in Theme.swift, shared app-wide.
 
 private func unit(_ rect: CGRect) -> CGFloat {
     min(rect.width, rect.height) / designSize
@@ -352,15 +344,25 @@ public struct ImitorIconView: View {
         ZStack {
             IconBaseLayer()
 
-            // `paused: true` schedules no frames at all, so a still icon
-            // costs nothing — it is not ticking invisibly in the background.
-            TimelineView(.animation(paused: !rotation.isRunning)) { context in
+            if rotation.isRunning {
+                // Throttled well below display refresh rate: this is purely
+                // decorative, and running it at full (up to 120Hz on ProMotion)
+                // refresh rate for the whole duration of a sync was competing
+                // with AppKit's click-event dispatch on the main thread, making
+                // the rest of the UI (sidebar selection in particular) feel
+                // laggy while a task was running. 15fps is still smooth for a
+                // slow 5s/revolution background element.
+                TimelineView(.periodic(from: .now, by: 1.0 / 15.0)) { context in
+                    SquaresLayer()
+                        .rotationEffect(.degrees(rotation.degrees(at: context.date)),
+                                        anchor: .center)
+                }
+            } else {
+                // No TimelineView at all when stopped — a still icon costs nothing.
                 SquaresLayer()
-                    .rotationEffect(.degrees(rotation.degrees(at: context.date)),
-                                    anchor: .center)
+                    .rotationEffect(.degrees(rotation.degrees(at: Date())), anchor: .center)
+                    .animation(.easeOut(duration: 0.35), value: rotation.accumulatedDegrees)
             }
-            .animation(rotation.isRunning ? nil : .easeOut(duration: 0.35),
-                       value: rotation.accumulatedDegrees)
         }
         .aspectRatio(1, contentMode: .fit)
     }

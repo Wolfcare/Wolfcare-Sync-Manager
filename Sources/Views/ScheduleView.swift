@@ -7,6 +7,7 @@ struct TaskScheduleView: View {
         case daily = "Daily at a time"
         case weekly = "Weekly"
         case everyN = "Every N minutes"
+        case once = "Run once at"
         var id: String { rawValue }
     }
 
@@ -18,6 +19,7 @@ struct TaskScheduleView: View {
     @State private var minute: Int = 0
     @State private var weekday: Int = 1 // Monday
     @State private var everyN: Int = 30
+    @State private var onceDate: Date = Date().addingTimeInterval(3600)
     @State private var loadedForTaskID: UUID?
 
     private let weekdayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
@@ -30,9 +32,10 @@ struct TaskScheduleView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Automatic Backups")
                 .font(.title2.bold())
+                .foregroundStyle(Theme.highlight2)
 
             Text("Currently: \(currentSchedule.summary)")
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
 
             Picker("Run", selection: $kind) {
                 ForEach(Kind.allCases) { Text($0.rawValue).tag($0) }
@@ -59,12 +62,17 @@ struct TaskScheduleView: View {
                 }
             case .everyN:
                 Stepper("Every \(everyN) minutes", value: $everyN, in: 1...1440)
+            case .once:
+                DatePicker("Run at", selection: $onceDate)
+                    .datePickerStyle(.field)
+                    .labelsHidden()
             }
 
             HStack {
                 Button("Apply Schedule") {
                     applySchedule()
                 }
+                .buttonStyle(.chrome)
                 if currentSchedule != .off {
                     Button("Remove Schedule", role: .destructive) {
                         store.clearSchedule(for: taskID)
@@ -75,7 +83,7 @@ struct TaskScheduleView: View {
 
             Text("Backups run in the background via a launchd LaunchAgent, even when this app's window is closed, as long as you're logged in.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
 
             Spacer()
         }
@@ -97,6 +105,8 @@ struct TaskScheduleView: View {
             kind = .weekly; weekday = w; hour = h; minute = m
         case .everyNMinutes(let n):
             kind = .everyN; everyN = n
+        case .once(let date):
+            kind = .once; onceDate = date
         }
     }
 
@@ -108,6 +118,7 @@ struct TaskScheduleView: View {
         case .daily: resolved = .daily(hour: hour, minute: minute)
         case .weekly: resolved = .weekly(weekday: weekday, hour: hour, minute: minute)
         case .everyN: resolved = .everyNMinutes(everyN)
+        case .once: resolved = .once(onceDate)
         }
         store.applySchedule(resolved, to: taskID)
     }

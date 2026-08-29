@@ -11,29 +11,33 @@ struct LogView: View {
             HStack {
                 Text("Recent Activity")
                     .font(.title2.bold())
+                    .foregroundStyle(Theme.highlight2)
                 Spacer()
                 Button {
                     store.refreshLog()
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
                 }
+                .buttonStyle(.chrome)
                 Button {
                     NSWorkspace.shared.activateFileViewerSelecting([ConfigIO.logFile])
                 } label: {
                     Label("Reveal in Finder", systemImage: "folder")
                 }
+                .buttonStyle(.chrome)
             }
 
             ScrollView {
                 Text(store.logText)
                     .font(.system(.body, design: .monospaced))
+                    .foregroundStyle(Theme.highlight1)
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
             }
-            .background(Color(nsColor: .textBackgroundColor))
+            .background(Theme.charcoalDeep)
             .cornerRadius(6)
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.gray.opacity(0.2)))
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(.white.opacity(0.08)))
         }
         .onAppear { store.refreshLog() }
         .onReceive(refreshTimer) { _ in store.refreshLog() }

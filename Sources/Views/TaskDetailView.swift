@@ -1,7 +1,8 @@
 import SwiftUI
+import AppKit
 
 struct TaskDetailView: View {
-    private enum Tab: String, CaseIterable, Identifiable {
+    private enum Tab: String, CaseIterable, Identifiable, Hashable {
         case sources = "Sources"
         case destination = "Destination"
         case schedule = "Schedule"
@@ -13,6 +14,7 @@ struct TaskDetailView: View {
     @EnvironmentObject private var progressTracker: SyncProgressTracker
     @State private var tab: Tab = .sources
     @State private var showRemoveConfirm = false
+    @FocusState private var nameFieldFocused: Bool
 
     private var task: SyncTask? { store.tasks.first(where: { $0.id == taskID }) }
 
@@ -28,61 +30,106 @@ struct TaskDetailView: View {
                 )
                 .textFieldStyle(.plain)
                 .font(.title2.bold())
+                .foregroundStyle(Theme.highlight2)
+                .focused($nameFieldFocused)
+                .onChange(of: nameFieldFocused) { focused in
+                    if !focused { store.assignDefaultNameIfEmpty(taskID) }
+                }
+                .onChange(of: store.pendingRenameTaskID) { pending in
+                    guard pending == taskID else { return }
+                    nameFieldFocused = true
+                    store.pendingRenameTaskID = nil
+                }
+                .onAppear {
+                    guard store.pendingRenameTaskID == taskID else { return }
+                    nameFieldFocused = true
+                    store.pendingRenameTaskID = nil
+                }
 
                 Spacer()
 
-                RunTaskButton(taskID: taskID)
-
-                if store.runStatus(for: taskID) == .running {
-                    Button {
-                        store.togglePauseTask(taskID)
-                    } label: {
-                        Image(systemName: store.isTaskPaused(taskID) ? "play.circle.fill" : "pause.circle.fill")
-                            .foregroundStyle(.yellow)
-                            .frame(width: 34, height: 34)
+                HStack(spacing: 4) {
+                    VStack(spacing: 4) {
+                        ChromeIconButton(systemImage: "pencil") {
+                            nameFieldFocused = true
+                        }
+                        Text("Rename")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Theme.gray2)
                     }
-                    .buttonStyle(.plain)
-                    .font(.system(size: 30))
-                    .help(store.isTaskPaused(taskID) ? "Resume this backup" : "Pause this backup")
+                    .frame(width: 68)
+                    .help("Rename this sync task")
 
-                    Button {
-                        store.stopTask(taskID)
-                    } label: {
-                        Image(systemName: "stop.circle.fill")
-                            .foregroundStyle(.red)
-                            .frame(width: 34, height: 34)
+                    VStack(spacing: 4) {
+                        RunTaskButton(taskID: taskID)
+                        Text("Sync Task")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Theme.gray2)
                     }
-                    .buttonStyle(.plain)
-                    .font(.system(size: 30))
-                    .help("Stop this backup")
-                }
+                    .frame(width: 68)
 
-                Button {
-                    showRemoveConfirm = true
-                } label: {
-                    Image(systemName: "trash")
-                        .frame(width: 34, height: 34)
-                }
-                .font(.system(size: 26))
-                .help("Delete this sync task")
-            }
+                    if store.runStatus(for: taskID) == .running {
+                        VStack(spacing: 4) {
+                            ChromeIconButton(systemImage: store.isTaskPaused(taskID) ? "play.fill" : "pause.fill") {
+                                store.togglePauseTask(taskID)
+                            }
+                            .disabled(store.isTaskPausing(taskID) || store.isTaskStopping(taskID))
+                            Text("Pause")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(Theme.gray2)
+                        }
+                        .frame(width: 68)
+                        .help(store.isTaskPaused(taskID) ? "Resume this backup" : "Pause this backup")
 
-            if let statusLine {
-                Text(statusLine)
-                    .font(.subheadline)
-                    .foregroundStyle(statusColor)
+                        VStack(spacing: 4) {
+                            ChromeIconButton(systemImage: "stop.fill") {
+                                store.stopTask(taskID)
+                            }
+                            .disabled(store.isTaskStopping(taskID))
+                            Text("Stop")
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundStyle(Theme.gray2)
+                        }
+                        .frame(width: 68)
+                        .help("Stop this backup")
+                    }
+
+                    VStack(spacing: 4) {
+                        ChromeIconButton(systemImage: "trash") {
+                            showRemoveConfirm = true
+                        }
+                        Text("Delete Task")
+                            .font(.system(size: 10, weight: .medium))
+                            .foregroundStyle(Theme.gray2)
+                    }
+                    .frame(width: 68)
+                    .help("Delete this sync task")
+                }
             }
 
             if store.runStatus(for: taskID) == .running {
+                if let statusLine {
+                    Text(statusLine)
+                        .font(.subheadline)
+                        .foregroundStyle(statusColor)
+                }
                 progressSection
+            } else if let summary = store.lastRunSummaries[taskID] {
+                CompletionBanner(
+                    summary: summary,
+                    onViewLog: { NSWorkspace.shared.activateFileViewerSelecting([ConfigIO.logFile]) },
+                    onDismiss: { store.dismissRunSummary(taskID) }
+                )
             }
 
-            Picker("", selection: $tab) {
-                ForEach(Tab.allCases) { Text($0.rawValue).tag($0) }
+            if let reasons = store.taskFailureReasons[taskID], !reasons.isEmpty {
+                failureReasonSection(reasons)
             }
-            .pickerStyle(.segmented)
-            .labelsHidden()
-            .frame(maxWidth: 420)
+
+            summaryCardsRow
+
+            ChromeSegmentedControl(tabs: Tab.allCases.map { ($0, $0.rawValue) }, selection: $tab)
+                .frame(maxWidth: 420, alignment: .leading)
 
             switch tab {
             case .sources: TaskSourcesView(taskID: taskID)
@@ -107,6 +154,8 @@ struct TaskDetailView: View {
         case .idle:
             return nil
         case .running:
+            if store.isTaskStopping(taskID) { return "Stopping…" }
+            if store.isTaskPausing(taskID) { return "Pausing…" }
             return store.isTaskPaused(taskID) ? "Paused" : "Syncing…"
         case .succeeded(let date):
             return "Completed at \(Self.timeFormatter.string(from: date))"
@@ -119,19 +168,108 @@ struct TaskDetailView: View {
 
     private var statusColor: Color {
         switch store.runStatus(for: taskID) {
-        case .idle, .running: return .secondary
+        case .idle, .running: return Theme.gray2
         case .succeeded: return .green
         case .failed: return .red
         case .stopped: return .orange
         }
     }
 
+    private func failureReasonSection(_ reasons: [String]) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text("Why it failed")
+                .font(.caption.bold())
+                .foregroundStyle(Theme.gray1)
+            ForEach(reasons, id: \.self) { reason in
+                Text(cleanedFailureReason(reason))
+                    .font(.caption)
+                    .foregroundStyle(.red)
+                    .textSelection(.enabled)
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: 420, alignment: .leading)
+        .background(Theme.charcoalDeep, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    /// Strips rsync's "rsync(12345): " process-id prefix for readability.
+    private func cleanedFailureReason(_ line: String) -> String {
+        guard let range = line.range(of: #"^rsync\(\d+\):\s*"#, options: .regularExpression) else { return line }
+        return String(line[range.upperBound...])
+    }
+
+    /// A Source/Destination/Schedule summary row, styled after Carbon Copy
+    /// Cloner's task cards, so the whole config is visible at a glance —
+    /// tapping a card jumps to that tab below for editing.
+    private var summaryCardsRow: some View {
+        HStack(spacing: 10) {
+            SummaryCard(icon: "folder.fill", title: "Sources", detail: sourcesSummaryText) {
+                tab = .sources
+                if task?.sources.isEmpty ?? true {
+                    chooseSourceDirectories()
+                }
+            }
+            SummaryCard(icon: "externaldrive.fill", title: "Destination", detail: destinationSummaryText, detailColor: destinationSummaryColor) {
+                tab = .destination
+                if task?.destination?.isEmpty ?? true {
+                    chooseDestination()
+                }
+            }
+            SummaryCard(icon: "clock.fill", title: "Schedule", detail: task?.schedule.summary ?? "Off") {
+                tab = .schedule
+            }
+        }
+        .frame(maxWidth: 480, alignment: .leading)
+    }
+
+    private func chooseSourceDirectories() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.allowsMultipleSelection = true
+        panel.prompt = "Add"
+        panel.message = "Choose one or more directories to back up"
+        if panel.runModal() == .OK {
+            for url in panel.urls {
+                store.addSource(url.path, to: taskID)
+            }
+        }
+    }
+
+    private func chooseDestination() {
+        let panel = NSOpenPanel()
+        panel.canChooseFiles = false
+        panel.canChooseDirectories = true
+        panel.canCreateDirectories = true
+        panel.allowsMultipleSelection = false
+        panel.prompt = "Choose"
+        panel.message = "Choose the backup destination root"
+        if panel.runModal() == .OK, let url = panel.url {
+            store.setDestination(url.path, for: taskID)
+        }
+    }
+
+    private var sourcesSummaryText: String {
+        guard let sources = task?.sources, !sources.isEmpty else { return "No directories yet" }
+        if sources.count == 1 { return sources[0].path }
+        return "\(sources.count) directories"
+    }
+
+    private var destinationSummaryText: String {
+        guard let destination = task?.destination, !destination.isEmpty else { return "Not set" }
+        return store.isDestinationReachable(taskID) ? destination : "Not reachable"
+    }
+
+    private var destinationSummaryColor: Color {
+        guard let destination = task?.destination, !destination.isEmpty else { return Theme.gray2 }
+        return store.isDestinationReachable(taskID) ? Theme.gray2 : .red
+    }
+
     @ViewBuilder
     private var progressSection: some View {
         if let progress = progressTracker.progress(for: taskID) {
-            VStack(alignment: .leading, spacing: 4) {
-                ProgressView(value: progress.fraction)
-                    .tint(store.isTaskPaused(taskID) ? .yellow : .accentColor)
+            VStack(alignment: .leading, spacing: 5) {
+                ChromeProgressBar(fraction: progress.fraction, tint: store.isTaskPaused(taskID) ? Theme.gray2 : Theme.highlight2)
                 HStack {
                     Text(progressDetailText(progress))
                     Spacer()
@@ -140,12 +278,15 @@ struct TaskDetailView: View {
                     }
                 }
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
             }
             .frame(maxWidth: 420)
         } else {
-            ProgressView("Calculating sync size…")
-                .frame(maxWidth: 420, alignment: .leading)
+            HStack(spacing: 8) {
+                ProgressView().controlSize(.small)
+                Text("Calculating sync size…").foregroundStyle(Theme.gray2)
+            }
+            .frame(maxWidth: 420, alignment: .leading)
         }
     }
 

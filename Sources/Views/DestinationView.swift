@@ -19,6 +19,7 @@ struct TaskDestinationView: View {
                     Text(destination)
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .foregroundStyle(Theme.highlight1)
                 }
                 if !store.isDestinationReachable(taskID) {
                     Text("Not reachable — is the drive mounted?")
@@ -27,18 +28,19 @@ struct TaskDestinationView: View {
                 }
             } else {
                 Text("No destination set yet.")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Theme.gray2)
             }
 
             Button {
                 chooseDestination()
             } label: {
-                Label("Choose Destination…", systemImage: "externaldrive.badge.plus")
+                Label(destination == nil ? "Choose Destination…" : "Change Destination…", systemImage: "externaldrive.badge.plus")
             }
+            .buttonStyle(.chrome)
 
             Text("Every backup run copies the contents of each source directory into this destination. Files about to be overwritten are preserved first under .versions/<timestamp>/.")
                 .font(.footnote)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Theme.gray2)
 
             Color.clear
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
