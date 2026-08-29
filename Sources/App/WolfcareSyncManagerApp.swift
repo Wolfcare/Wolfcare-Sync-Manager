@@ -17,6 +17,7 @@ struct WolfcareSyncManagerApp: App {
         WindowGroup(id: "main") {
             ContentView()
                 .environmentObject(store)
+                .environmentObject(store.progressTracker)
         }
         .windowResizability(.contentSize)
         .commands {
@@ -45,6 +46,7 @@ struct WolfcareSyncManagerApp: App {
         switch store.overallStatus {
         case .running: return .blue
         case .failed: return .red
+        case .stopped: return .orange
         case .idle, .succeeded: return nil
         }
     }

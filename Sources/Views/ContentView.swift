@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     enum Selection: Hashable {
@@ -14,19 +15,22 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            List(selection: $selection) {
-                Section("Sync Tasks") {
-                    ForEach(store.tasks) { task in
-                        taskRow(task)
-                            .tag(Selection.task(task.id))
+            VStack(alignment: .leading, spacing: 0) {
+                globalRunControls
+                List(selection: $selection) {
+                    Section("Sync Tasks") {
+                        ForEach(store.tasks) { task in
+                            taskRow(task)
+                                .tag(Selection.task(task.id))
+                        }
+                        if store.tasks.isEmpty {
+                            Text("No tasks yet").foregroundStyle(.secondary)
+                        }
                     }
-                    if store.tasks.isEmpty {
-                        Text("No tasks yet").foregroundStyle(.secondary)
+                    Section {
+                        Label("Activity Log", systemImage: "doc.text")
+                            .tag(Selection.activityLog)
                     }
-                }
-                Section {
-                    Label("Activity Log", systemImage: "doc.text")
-                        .tag(Selection.activityLog)
                 }
             }
             .navigationTitle("Imitor Sync Manager")
@@ -75,14 +79,69 @@ struct ContentView: View {
         } message: {
             Text(store.lastError ?? "")
         }
+        .alert("Full Disk Access Needed", isPresented: Binding(
+            get: { store.fullDiskAccessWarning != nil },
+            set: { if !$0 { store.fullDiskAccessWarning = nil } }
+        )) {
+            Button("Open System Settings") {
+                if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles") {
+                    NSWorkspace.shared.open(url)
+                }
+            }
+            Button("Not Now", role: .cancel) { store.fullDiskAccessWarning = nil }
+        } message: {
+            Text((store.fullDiskAccessWarning ?? "") + "\n\nGrant Imitor Sync Manager Full Disk Access so it can reliably read and write every source, destination, and connected drive.")
+        }
+    }
+
+    private var globalRunControls: some View {
+        HStack(spacing: 20) {
+            Button {
+                store.runAllTasksNow()
+            } label: {
+                Image(systemName: "play.circle.fill")
+                    .foregroundStyle(.green)
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 25.3))
+            .disabled(!store.canRunAnyTask)
+            .help("Run all sync tasks now")
+
+            Button {
+                store.toggleGlobalPause()
+            } label: {
+                Image(systemName: store.isAnyTaskPaused ? "play.circle.fill" : "pause.circle.fill")
+                    .foregroundStyle(.yellow)
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 25.3))
+            .disabled(!store.isAnyTaskRunning)
+            .help(store.isAnyTaskPaused ? "Resume all paused tasks" : "Pause all running tasks")
+
+            Button {
+                store.stopAllTasks()
+            } label: {
+                Image(systemName: "stop.circle.fill")
+                    .foregroundStyle(.red)
+            }
+            .buttonStyle(.plain)
+            .font(.system(size: 25.3))
+            .disabled(!store.isAnyTaskRunning)
+            .help("Stop all running tasks")
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 2)
     }
 
     private func statusIcon(for taskID: UUID) -> String {
+        if store.isTaskPaused(taskID) { return "pause.circle.fill" }
         switch store.runStatus(for: taskID) {
         case .idle: return "arrow.triangle.2.circlepath"
         case .running: return "arrow.triangle.2.circlepath.circle.fill"
         case .succeeded: return "checkmark.circle"
         case .failed: return "exclamationmark.triangle"
+        case .stopped: return "stop.circle"
         }
     }
 

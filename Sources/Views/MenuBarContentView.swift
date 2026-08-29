@@ -40,11 +40,13 @@ struct MenuBarContentView: View {
         case .idle:
             return "\(task.name) — \(task.schedule.summary)"
         case .running:
-            return "\(task.name) — Syncing…"
+            return "\(task.name) — \(store.isTaskPaused(task.id) ? "Paused" : "Syncing…")"
         case .succeeded(let date):
             return "\(task.name) — OK at \(Self.timeFormatter.string(from: date))"
         case .failed(let date):
             return "\(task.name) — FAILED at \(Self.timeFormatter.string(from: date))"
+        case .stopped(let date):
+            return "\(task.name) — Stopped at \(Self.timeFormatter.string(from: date))"
         }
     }
 

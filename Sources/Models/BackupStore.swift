@@ -9,12 +9,20 @@ final class BackupStore: ObservableObject {
         case running
         case succeeded(Date)
         case failed(Date)
+        case stopped(Date)
     }
 
     @Published private(set) var tasks: [SyncTask] = []
     @Published private(set) var runStatuses: [UUID: RunStatus] = [:]
+    @Published private(set) var pausedTaskIDs: Set<UUID> = []
     @Published private(set) var logText: String = "(no log yet)"
     @Published var lastError: String?
+    @Published var fullDiskAccessWarning: String?
+
+    /// Deliberately not @Published — see SyncProgressTracker's doc comment.
+    let progressTracker = SyncProgressTracker()
+
+    private var runHandles: [UUID: RunHandle] = [:]
 
     /// Drives the animated app icon (main window background + menu bar icon)
     /// so both share one rotation clock tied to actual sync activity.
@@ -27,6 +35,32 @@ final class BackupStore: ObservableObject {
             runStatuses[task.id] = .idle
         }
         refreshLog()
+        checkFullDiskAccess()
+    }
+
+    // MARK: - Permissions
+
+    /// Run at launch so a missing permission surfaces immediately rather than
+    /// as a mysterious backup failure later. Full Disk Access is all-or-nothing,
+    /// but macOS can additionally gate individual removable/network volumes, so
+    /// every currently mounted volume is probed too. Runs off the main thread —
+    /// a stale network mount could otherwise stall app launch on the directory read.
+    func checkFullDiskAccess() {
+        Task.detached(priority: .utility) { [weak self] in
+            let hasFDA = FullDiskAccessChecker.hasFullDiskAccess
+            let unreadableVolumes = FullDiskAccessChecker.unreadableMountedVolumeNames()
+            var problems: [String] = []
+            if !hasFDA {
+                problems.append("Full Disk Access is not granted.")
+            }
+            if !unreadableVolumes.isEmpty {
+                problems.append("Can't read: \(unreadableVolumes.joined(separator: ", ")).")
+            }
+            let warning = problems.isEmpty ? nil : problems.joined(separator: "\n")
+            await MainActor.run {
+                self?.fullDiskAccessWarning = warning
+            }
+        }
     }
 
     func runStatus(for taskID: UUID) -> RunStatus {
@@ -41,12 +75,33 @@ final class BackupStore: ObservableObject {
             return nil
         }
         if let latestFailure = failedDates.max() { return .failed(latestFailure) }
+        let stoppedDates = statuses.compactMap { status -> Date? in
+            if case .stopped(let date) = status { return date }
+            return nil
+        }
+        if let latestStop = stoppedDates.max() { return .stopped(latestStop) }
         let succeededDates = statuses.compactMap { status -> Date? in
             if case .succeeded(let date) = status { return date }
             return nil
         }
         if let latestSuccess = succeededDates.max() { return .succeeded(latestSuccess) }
         return .idle
+    }
+
+    var canRunAnyTask: Bool {
+        tasks.contains { canRunTask($0.id) }
+    }
+
+    var isAnyTaskRunning: Bool {
+        runStatuses.values.contains(.running)
+    }
+
+    var isAnyTaskPaused: Bool {
+        !pausedTaskIDs.isEmpty
+    }
+
+    func isTaskPaused(_ taskID: UUID) -> Bool {
+        pausedTaskIDs.contains(taskID)
     }
 
     private func persist() {
@@ -162,11 +217,19 @@ final class BackupStore: ObservableObject {
 
     func runTaskNow(_ taskID: UUID) {
         guard canRunTask(taskID), let task = tasks.first(where: { $0.id == taskID }) else { return }
+        let handle = RunHandle()
+        runHandles[taskID] = handle
+        pausedTaskIDs.remove(taskID)
+        progressTracker.clear(taskID)
         runStatuses[taskID] = .running
         iconRotation.start()
         Task.detached(priority: .userInitiated) {
-            let ok = HeadlessRunner.run(task: task)
-            await self.finishRun(taskID: taskID, ok: ok)
+            let ok = HeadlessRunner.run(task: task, handle: handle) { progress in
+                Task { @MainActor in
+                    self.progressTracker.set(progress, for: taskID)
+                }
+            }
+            await self.finishRun(taskID: taskID, ok: ok, handle: handle)
         }
     }
 
@@ -176,8 +239,53 @@ final class BackupStore: ObservableObject {
         }
     }
 
-    private func finishRun(taskID: UUID, ok: Bool) {
-        runStatuses[taskID] = ok ? .succeeded(Date()) : .failed(Date())
+    /// Pauses (SIGSTOP) or resumes (SIGCONT) one task's in-flight rsync process,
+    /// independently of any other task's run.
+    func togglePauseTask(_ taskID: UUID) {
+        guard runStatus(for: taskID) == .running, let handle = runHandles[taskID] else { return }
+        if handle.togglePause() {
+            pausedTaskIDs.insert(taskID)
+        } else {
+            pausedTaskIDs.remove(taskID)
+        }
+    }
+
+    /// Terminates one task's in-flight rsync process, independently of any other task's run.
+    func stopTask(_ taskID: UUID) {
+        runHandles[taskID]?.cancel()
+    }
+
+    func pauseAllRunningTasks() {
+        for task in tasks where runStatus(for: task.id) == .running && !pausedTaskIDs.contains(task.id) {
+            togglePauseTask(task.id)
+        }
+    }
+
+    func resumeAllPausedTasks() {
+        for taskID in pausedTaskIDs {
+            togglePauseTask(taskID)
+        }
+    }
+
+    func toggleGlobalPause() {
+        if isAnyTaskPaused {
+            resumeAllPausedTasks()
+        } else {
+            pauseAllRunningTasks()
+        }
+    }
+
+    func stopAllTasks() {
+        for task in tasks where runStatus(for: task.id) == .running {
+            stopTask(task.id)
+        }
+    }
+
+    private func finishRun(taskID: UUID, ok: Bool, handle: RunHandle) {
+        runStatuses[taskID] = handle.isCancelled ? .stopped(Date()) : (ok ? .succeeded(Date()) : .failed(Date()))
+        pausedTaskIDs.remove(taskID)
+        runHandles[taskID] = nil
+        progressTracker.clear(taskID)
         refreshLog()
 
         // Only stop the icon animation once every in-flight task has

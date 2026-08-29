@@ -13,7 +13,7 @@ enum HeadlessRunner {
         return run(task: task)
     }
 
-    static func run(task: SyncTask) -> Bool {
+    static func run(task: SyncTask, handle: RunHandle? = nil, onProgress: ((RsyncRunner.SyncProgress) -> Void)? = nil) -> Bool {
         let prefix = "[\(task.name)]"
 
         guard let destination = task.destination, !destination.isEmpty else {
@@ -30,7 +30,7 @@ enum HeadlessRunner {
             return false
         }
 
-        return RsyncRunner.runBackup(sources: task.sources, destinationRoot: destination) { message in
+        return RsyncRunner.runBackup(sources: task.sources, destinationRoot: destination, handle: handle, onProgress: onProgress) { message in
             ConfigIO.appendLog("\(prefix) \(message)")
         }
     }

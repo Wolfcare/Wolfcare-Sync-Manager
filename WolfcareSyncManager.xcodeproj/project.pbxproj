@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0583EB99874E0DECAD1D1C2F /* RunHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722DFB000CB84B522B08FCB7 /* RunHandle.swift */; };
 		07D5B8D729607406A8C6DBEE /* BackupStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */; };
 		325BAA6B32D4E0AB9FF04E5B /* ImitorIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003D4AFF179F7705FF8BA858 /* ImitorIconView.swift */; };
 		3DBAB1DF73341414C5776320 /* LaunchAgentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */; };
@@ -14,8 +15,10 @@
 		468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E776AE5727BF64A4D6FB5E88 /* ScheduleView.swift */; };
 		4AC23E19838F52944991A5C0 /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51BB2EAFD4F5170284EEA471 /* TaskDetailView.swift */; };
 		5EAA2E34BE2817B5AF4ED5C7 /* HeadlessRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA8E553275C23641D861E5C /* HeadlessRunner.swift */; };
+		5F59975BBCB1221400D69A99 /* FullDiskAccessChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5AF4E53952AF8664A2AE4E /* FullDiskAccessChecker.swift */; };
 		770C2A1966E0625E4489B74D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */; };
 		7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB077A4A627D6191A9271C64 /* ScheduleKind.swift */; };
+		90A9F6818AF57E9A7F666595 /* SyncProgressTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A513E475DD13A47FE64331B9 /* SyncProgressTracker.swift */; };
 		90AD4031E85DCEFCED856D23 /* ConfigIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */; };
 		979FA4DC5A6EA133AD41B939 /* DestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC026D5D850A3E63A30C0A /* DestinationView.swift */; };
 		9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FB031BFAFD8830E428ACBA /* SourcesView.swift */; };
@@ -40,13 +43,16 @@
 		2DEC026D5D850A3E63A30C0A /* DestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationView.swift; sourceTree = "<group>"; };
 		361E04A59E6EC998D6035B01 /* RunBackupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBackupButton.swift; sourceTree = "<group>"; };
 		43679D532023BC3C0198A85C /* SyncTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTask.swift; sourceTree = "<group>"; };
+		4C5AF4E53952AF8664A2AE4E /* FullDiskAccessChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDiskAccessChecker.swift; sourceTree = "<group>"; };
 		4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RsyncRunner.swift; sourceTree = "<group>"; };
 		51007B7A00BD6AFB12EDF147 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		51BB2EAFD4F5170284EEA471 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
+		722DFB000CB84B522B08FCB7 /* RunHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunHandle.swift; sourceTree = "<group>"; };
 		84FB031BFAFD8830E428ACBA /* SourcesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesView.swift; sourceTree = "<group>"; };
 		8A21081CC541C57F00932260 /* MenuBarIconRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarIconRenderer.swift; sourceTree = "<group>"; };
 		989D9C560A9C0750EB320CD5 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchAgentManager.swift; sourceTree = "<group>"; };
+		A513E475DD13A47FE64331B9 /* SyncProgressTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncProgressTracker.swift; sourceTree = "<group>"; };
 		A8E2624ACE54C88A943B87DA /* SourceEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEntry.swift; sourceTree = "<group>"; };
 		C2C3ACB9EEB2C4AFCA8D1A44 /* BackupStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStore.swift; sourceTree = "<group>"; };
 		D7755E7EBBB00C70958EA258 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
@@ -110,9 +116,11 @@
 		74E5806BB39F3C0426608C72 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				4C5AF4E53952AF8664A2AE4E /* FullDiskAccessChecker.swift */,
 				EEA8E553275C23641D861E5C /* HeadlessRunner.swift */,
 				9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */,
 				4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */,
+				722DFB000CB84B522B08FCB7 /* RunHandle.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -132,6 +140,7 @@
 				F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */,
 				EB077A4A627D6191A9271C64 /* ScheduleKind.swift */,
 				A8E2624ACE54C88A943B87DA /* SourceEntry.swift */,
+				A513E475DD13A47FE64331B9 /* SyncProgressTracker.swift */,
 				43679D532023BC3C0198A85C /* SyncTask.swift */,
 			);
 			path = Models;
@@ -209,6 +218,7 @@
 				90AD4031E85DCEFCED856D23 /* ConfigIO.swift in Sources */,
 				9C4FE61A4E1561EBE494A7C6 /* ContentView.swift in Sources */,
 				979FA4DC5A6EA133AD41B939 /* DestinationView.swift in Sources */,
+				5F59975BBCB1221400D69A99 /* FullDiskAccessChecker.swift in Sources */,
 				5EAA2E34BE2817B5AF4ED5C7 /* HeadlessRunner.swift in Sources */,
 				325BAA6B32D4E0AB9FF04E5B /* ImitorIconView.swift in Sources */,
 				3DBAB1DF73341414C5776320 /* LaunchAgentManager.swift in Sources */,
@@ -217,10 +227,12 @@
 				EE27EEE5C76532DDF46DE3CD /* MenuBarIconRenderer.swift in Sources */,
 				9FE7C1418043A643EA304362 /* RsyncRunner.swift in Sources */,
 				416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */,
+				0583EB99874E0DECAD1D1C2F /* RunHandle.swift in Sources */,
 				7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */,
 				468EE1DE44936DB8BA390067 /* ScheduleView.swift in Sources */,
 				BBF90D63471334B3925193B0 /* SourceEntry.swift in Sources */,
 				9A12952FE2DEF5B8E1FBC145 /* SourcesView.swift in Sources */,
+				90A9F6818AF57E9A7F666595 /* SyncProgressTracker.swift in Sources */,
 				A83BF0AF087C77E5DB857156 /* SyncTask.swift in Sources */,
 				4AC23E19838F52944991A5C0 /* TaskDetailView.swift in Sources */,
 				AC8422F22E0117CE9633E74A /* WolfcareSyncManagerApp.swift in Sources */,
