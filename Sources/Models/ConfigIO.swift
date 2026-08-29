@@ -95,6 +95,11 @@ enum ConfigIO {
         }
     }
 
+    static func clearLog() {
+        ensureConfigFilesExist()
+        try? Data().write(to: logFile)
+    }
+
     static func readRecentLogLines(limit: Int = 200) -> String {
         guard let data = try? Data(contentsOf: logFile) else {
             return "(no log yet)"

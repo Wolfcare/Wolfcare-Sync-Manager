@@ -96,9 +96,7 @@ struct ContentView: View {
             Group {
                 switch selection {
                 case .task(let id) where store.tasks.contains(where: { $0.id == id }):
-                    ScrollView {
-                        TaskDetailView(taskID: id)
-                    }
+                    TaskDetailView(taskID: id)
                 case .activityLog:
                     LogView()
                 default:

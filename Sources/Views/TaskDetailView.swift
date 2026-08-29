@@ -131,10 +131,15 @@ struct TaskDetailView: View {
             ChromeSegmentedControl(tabs: Tab.allCases.map { ($0, $0.rawValue) }, selection: $tab)
                 .frame(maxWidth: 420, alignment: .leading)
 
-            switch tab {
-            case .sources: TaskSourcesView(taskID: taskID)
-            case .destination: TaskDestinationView(taskID: taskID)
-            case .schedule: TaskScheduleView(taskID: taskID)
+            // Only this tab body scrolls — the name/buttons, status, and
+            // summary cards above stay pinned so a short window never has to
+            // be scrolled just to see the task's name or run its controls.
+            ScrollView {
+                switch tab {
+                case .sources: TaskSourcesView(taskID: taskID)
+                case .destination: TaskDestinationView(taskID: taskID)
+                case .schedule: TaskScheduleView(taskID: taskID)
+                }
             }
         }
         .confirmationDialog(

@@ -5,6 +5,7 @@ import Combine
 struct LogView: View {
     @EnvironmentObject private var store: BackupStore
     private let refreshTimer = Timer.publish(every: 3, on: .main, in: .common).autoconnect()
+    @State private var showClearConfirm = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -17,12 +18,21 @@ struct LogView: View {
                     store.refreshLog()
                 } label: {
                     Label("Refresh", systemImage: "arrow.clockwise")
+                        .frame(minWidth: 68)
                 }
                 .buttonStyle(.chrome)
                 Button {
                     NSWorkspace.shared.activateFileViewerSelecting([ConfigIO.logFile])
                 } label: {
-                    Label("Reveal in Finder", systemImage: "folder")
+                    Label("Open", systemImage: "folder")
+                        .frame(minWidth: 68)
+                }
+                .buttonStyle(.chrome)
+                Button {
+                    showClearConfirm = true
+                } label: {
+                    Label("Clear Log", systemImage: "trash")
+                        .frame(minWidth: 68)
                 }
                 .buttonStyle(.chrome)
             }
@@ -41,5 +51,15 @@ struct LogView: View {
         }
         .onAppear { store.refreshLog() }
         .onReceive(refreshTimer) { _ in store.refreshLog() }
+        .confirmationDialog(
+            "Clear the activity log?",
+            isPresented: $showClearConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Clear Log", role: .destructive) { store.clearLog() }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("This permanently deletes the log file's contents. It can't be undone.")
+        }
     }
 }

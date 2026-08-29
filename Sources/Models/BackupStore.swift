@@ -347,6 +347,11 @@ final class BackupStore: ObservableObject {
         logText = ConfigIO.readRecentLogLines()
     }
 
+    func clearLog() {
+        ConfigIO.clearLog()
+        refreshLog()
+    }
+
     // MARK: - Run
 
     func runTaskNow(_ taskID: UUID) {

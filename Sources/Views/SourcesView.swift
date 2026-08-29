@@ -11,6 +11,27 @@ struct TaskSourcesView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            // Kept above the (potentially long) source list so they're
+            // visible without scrolling — the count/Add button in particular
+            // is the main action on this tab, not something to hunt for.
+            if !sources.isEmpty {
+                HStack {
+                    Button {
+                        chooseDirectories()
+                    } label: {
+                        Label("Add Directory…", systemImage: "plus")
+                    }
+                    .buttonStyle(.chrome)
+                    Spacer()
+                    Text("\(sources.count) director\(sources.count == 1 ? "y" : "ies")")
+                        .foregroundStyle(Theme.gray2)
+                }
+
+                Text("Contents Only copies what's inside the folder straight into the destination. Folder + Contents copies the folder itself as a subfolder there, so sources with same-named files don't collide.")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.gray2)
+            }
+
             Group {
                 if sources.isEmpty {
                     VStack(spacing: 14) {
@@ -75,26 +96,6 @@ struct TaskSourcesView: View {
                 ImitorIconView(rotation: store.iconRotation)
                     .opacity(0.08)
                     .allowsHitTesting(false)
-            }
-
-            if !sources.isEmpty {
-                Text("Contents Only copies what's inside the folder straight into the destination. Folder + Contents copies the folder itself as a subfolder there, so sources with same-named files don't collide.")
-                    .font(.footnote)
-                    .foregroundStyle(Theme.gray2)
-            }
-
-            if !sources.isEmpty {
-                HStack {
-                    Button {
-                        chooseDirectories()
-                    } label: {
-                        Label("Add Directory…", systemImage: "plus")
-                    }
-                    .buttonStyle(.chrome)
-                    Spacer()
-                    Text("\(sources.count) director\(sources.count == 1 ? "y" : "ies")")
-                        .foregroundStyle(Theme.gray2)
-                }
             }
         }
     }

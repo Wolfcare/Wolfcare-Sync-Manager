@@ -30,18 +30,34 @@ struct TaskScheduleView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Automatic Backups")
-                .font(.title2.bold())
-                .foregroundStyle(Theme.highlight2)
-
-            Text("Currently: \(currentSchedule.summary)")
-                .foregroundStyle(Theme.gray2)
-
-            Picker("Run", selection: $kind) {
-                ForEach(Kind.allCases) { Text($0.rawValue).tag($0) }
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text("Automatic Backups")
+                    .font(.title2.bold())
+                    .foregroundStyle(Theme.highlight2)
+                Text("— Currently: \(currentSchedule.summary)")
+                    .foregroundStyle(Theme.gray2)
             }
-            .pickerStyle(.radioGroup)
-            .labelsHidden()
+
+            HStack(alignment: .top, spacing: 24) {
+                Picker("Run", selection: $kind) {
+                    ForEach(Kind.allCases) { Text($0.rawValue).tag($0) }
+                }
+                .pickerStyle(.radioGroup)
+                .labelsHidden()
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Button("Apply Schedule") {
+                        applySchedule()
+                    }
+                    .buttonStyle(.chrome)
+                    if currentSchedule != .off {
+                        Button("Remove Schedule", role: .destructive) {
+                            store.clearSchedule(for: taskID)
+                            kind = .off
+                        }
+                    }
+                }
+            }
 
             switch kind {
             case .off, .hourly:
@@ -66,19 +82,6 @@ struct TaskScheduleView: View {
                 DatePicker("Run at", selection: $onceDate)
                     .datePickerStyle(.field)
                     .labelsHidden()
-            }
-
-            HStack {
-                Button("Apply Schedule") {
-                    applySchedule()
-                }
-                .buttonStyle(.chrome)
-                if currentSchedule != .off {
-                    Button("Remove Schedule", role: .destructive) {
-                        store.clearSchedule(for: taskID)
-                        kind = .off
-                    }
-                }
             }
 
             Text("Backups run in the background via a launchd LaunchAgent, even when this app's window is closed, as long as you're logged in.")
