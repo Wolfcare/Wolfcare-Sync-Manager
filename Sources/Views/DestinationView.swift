@@ -4,6 +4,8 @@ import AppKit
 struct TaskDestinationView: View {
     let taskID: UUID
     @EnvironmentObject private var store: BackupStore
+    // Deliberately never started — see TaskSourcesView's watermarkRotation.
+    @StateObject private var watermarkRotation = SquaresRotation()
 
     private var destination: String? {
         store.tasks.first(where: { $0.id == taskID })?.destination
@@ -45,7 +47,7 @@ struct TaskDestinationView: View {
             Color.clear
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background {
-                    ImitorIconView(rotation: store.iconRotation)
+                    ImitorIconView(rotation: watermarkRotation)
                         .opacity(0.08)
                         .allowsHitTesting(false)
                 }

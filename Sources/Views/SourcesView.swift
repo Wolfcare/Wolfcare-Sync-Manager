@@ -4,6 +4,13 @@ import AppKit
 struct TaskSourcesView: View {
     let taskID: UUID
     @EnvironmentObject private var store: BackupStore
+    // Deliberately never started: this icon is a purely decorative background
+    // watermark, and animating it here duplicated the cost of the main
+    // window's/menu bar's own spinning icon at the exact moment a user
+    // switches into this tab during a run — noticeable on slower Macs. A
+    // rotation object that never starts renders the same still icon at zero
+    // ongoing cost.
+    @StateObject private var watermarkRotation = SquaresRotation()
 
     private var sources: [SourceEntry] {
         store.tasks.first(where: { $0.id == taskID })?.sources ?? []
@@ -93,7 +100,7 @@ struct TaskSourcesView: View {
                 }
             }
             .background {
-                ImitorIconView(rotation: store.iconRotation)
+                ImitorIconView(rotation: watermarkRotation)
                     .opacity(0.08)
                     .allowsHitTesting(false)
             }

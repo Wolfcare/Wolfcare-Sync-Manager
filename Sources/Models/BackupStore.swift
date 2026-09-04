@@ -129,6 +129,25 @@ final class BackupStore: ObservableObject {
         checkForUpdates(manual: false)
     }
 
+    private static let lastRsyncUpdateCheckKey = "lastRsyncUpdateCheckDate"
+
+    /// Called on launch. Checks at most once a day, off the main thread since
+    /// `brew` can take a while — silent either way, logged to Activity Log.
+    func updateRsyncIfDue() {
+        let defaults = UserDefaults.standard
+        if let last = defaults.object(forKey: Self.lastRsyncUpdateCheckKey) as? Date,
+           Date().timeIntervalSince(last) < 86400 {
+            return
+        }
+        defaults.set(Date(), forKey: Self.lastRsyncUpdateCheckKey)
+        Task.detached(priority: .utility) {
+            RsyncUpdater.updateRsyncIfPossible()
+            await MainActor.run { [weak self] in
+                self?.refreshLog()
+            }
+        }
+    }
+
     /// `manual: true` (the menu bar "Check for Updates…" item) always reports
     /// a result, including "you're up to date" or a network failure; the
     /// automatic daily check only ever surfaces an actual available update.
@@ -344,7 +363,12 @@ final class BackupStore: ObservableObject {
     // MARK: - Log
 
     func refreshLog() {
-        logText = ConfigIO.readRecentLogLines()
+        Task.detached(priority: .utility) { [weak self] in
+            let text = ConfigIO.readRecentLogLines()
+            await MainActor.run {
+                self?.logText = text
+            }
+        }
     }
 
     func clearLog() {

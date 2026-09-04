@@ -8,7 +8,6 @@ struct ContentView: View {
     }
 
     @EnvironmentObject private var store: BackupStore
-    @EnvironmentObject private var progressTracker: SyncProgressTracker
     @State private var selection: Selection?
     @State private var renamingTaskID: UUID?
     @State private var renameDraft: String = ""
@@ -121,6 +120,7 @@ struct ContentView: View {
             }
             store.checkFullDiskAccess()
             store.checkForUpdatesIfDue()
+            store.updateRsyncIfDue()
             if showWalkthroughOnLaunch {
                 showWalkthroughSheet = true
             }
@@ -230,17 +230,6 @@ struct ContentView: View {
         .help(help)
     }
 
-    /// Shown next to the task name in the sidebar while it's running, so a
-    /// scheduled or manual run's progress is visible there without opening
-    /// the task's detail view.
-    private func sidebarStatusSuffix(for taskID: UUID) -> String {
-        guard store.runStatus(for: taskID) == .running else { return "" }
-        if store.isTaskStopping(taskID) { return " — Stopping…" }
-        if store.isTaskPausing(taskID) { return " — Pausing…" }
-        if store.isTaskPaused(taskID) { return " — Paused" }
-        return progressTracker.progress(for: taskID) == nil ? " — Calculating…" : " — Running"
-    }
-
     private func statusIcon(for taskID: UUID) -> String {
         if store.isTaskStopping(taskID) { return "stop.circle.fill" }
         if store.isTaskPausing(taskID) || store.isTaskPaused(taskID) { return "pause.circle.fill" }
@@ -278,9 +267,16 @@ struct ContentView: View {
                         if !focused { commitRename(task.id) }
                     }
             } else {
-                Label(task.name + sidebarStatusSuffix(for: task.id), systemImage: statusIcon(for: task.id))
-                    .foregroundStyle(Theme.highlight1)
-                    .help(store.taskFailureReasons[task.id]?.first ?? "")
+                Label {
+                    HStack(spacing: 0) {
+                        Text(task.name)
+                        TaskStatusSuffix(taskID: task.id)
+                    }
+                } icon: {
+                    Image(systemName: statusIcon(for: task.id))
+                }
+                .foregroundStyle(Theme.highlight1)
+                .help(store.taskFailureReasons[task.id]?.first ?? "")
             }
         }
         .padding(.vertical, 8)
@@ -326,5 +322,29 @@ struct ContentView: View {
             store.renameTask(taskID, to: trimmed)
         }
         renamingTaskID = nil
+    }
+}
+
+/// Shown next to a task's name in the sidebar while it's running. Isolated
+/// into its own view — rather than read inline in ContentView's body, as it
+/// used to be — so a progress tick (as often as every ~150ms) only
+/// invalidates this one row's suffix text instead of the whole sidebar List
+/// and detail pane. See SyncProgressTracker's doc comment for why progress
+/// is kept off BackupStore's @Published surface in the first place.
+private struct TaskStatusSuffix: View {
+    @EnvironmentObject private var store: BackupStore
+    @EnvironmentObject private var progressTracker: SyncProgressTracker
+    let taskID: UUID
+
+    var body: some View {
+        Text(suffix)
+    }
+
+    private var suffix: String {
+        guard store.runStatus(for: taskID) == .running else { return "" }
+        if store.isTaskStopping(taskID) { return " — Stopping…" }
+        if store.isTaskPausing(taskID) { return " — Pausing…" }
+        if store.isTaskPaused(taskID) { return " — Paused" }
+        return progressTracker.progress(for: taskID) == nil ? " — Calculating…" : " — Running"
     }
 }

@@ -19,7 +19,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wolfcare.SyncManager
         PRODUCT_NAME: "Imitor Sync Manager"
         MARKETING_VERSION: "1.0.0"
-        CURRENT_PROJECT_VERSION: "26"
+        CURRENT_PROJECT_VERSION: "36"
         SWIFT_VERSION: "5.0"
         MACOSX_DEPLOYMENT_TARGET: "13.0"
         ENABLE_HARDENED_RUNTIME: YES
@@ -34,7 +34,7 @@ targets:
         LSUIElement: NO
         NSHumanReadableCopyright: "Script written by Santo Berlin © 2026. GUI written by Wolfcare © 2026."
         CFBundleShortVersionString: "1.0.0"
-        CFBundleVersion: "26"
+        CFBundleVersion: "36"
         NSPrincipalClass: NSApplication
     scheme:
       testTargets: []

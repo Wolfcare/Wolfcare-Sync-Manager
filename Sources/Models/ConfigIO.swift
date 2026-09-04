@@ -101,9 +101,36 @@ enum ConfigIO {
     }
 
     static func readRecentLogLines(limit: Int = 200) -> String {
-        guard let data = try? Data(contentsOf: logFile) else {
+        guard let handle = try? FileHandle(forReadingFrom: logFile),
+              let fileSize = try? handle.seekToEnd(), fileSize > 0
+        else {
             return "(no log yet)"
         }
+        defer { try? handle.close() }
+
+        // Read growing chunks from the end of the file until there are enough
+        // lines, instead of loading the whole file — a long-running task can
+        // leave this log tens of MB, and decoding/splitting all of it just to
+        // show the last 200 lines was blocking the main thread long enough to
+        // freeze the UI (worse on slower Macs).
+        var chunkSize: UInt64 = 65_536
+        var data = Data()
+        while true {
+            let readSize = min(chunkSize, fileSize)
+            let offset = fileSize - readSize
+            do {
+                try handle.seek(toOffset: offset)
+                data = try handle.read(upToCount: Int(readSize)) ?? Data()
+            } catch {
+                return "(no log yet)"
+            }
+            let newlineCount = data.reduce(into: 0) { count, byte in
+                if byte == 0x0A { count += 1 }
+            }
+            if newlineCount > limit || readSize == fileSize { break }
+            chunkSize *= 4
+        }
+
         // Lossy-decode rather than strict UTF-8: a single stray byte anywhere
         // in the file (e.g. a legacy-encoded filename echoed verbatim from a
         // network share's rsync output) would otherwise fail the whole read

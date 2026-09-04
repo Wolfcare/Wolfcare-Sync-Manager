@@ -1,8 +1,9 @@
 import Foundation
 
-/// Runs rsync the same way rsync_backup.sh does: archive mode, checksum
-/// comparison, and a timestamped --backup-dir under DEST_ROOT/.versions
-/// so overwritten files are preserved instead of lost.
+/// Runs rsync in archive mode with a timestamped --backup-dir under
+/// DEST_ROOT/.versions so overwritten files are preserved instead of lost.
+/// Change detection uses rsync's default quick-check (size + mtime) rather
+/// than full checksum comparison — see runBackup for why.
 enum RsyncRunner {
 
     /// A snapshot of how far a multi-source backup run has gotten, in bytes,
@@ -42,6 +43,22 @@ enum RsyncRunner {
 
     private static func looksLikeWarningLine(_ line: String) -> Bool {
         line.contains("warning:") || line.contains("rsync error") || line.lowercased().contains("permission denied")
+    }
+
+    /// macOS volume-metadata directories that are owned by the system and never
+    /// readable by a normal user process. Backing these up always fails with
+    /// "Permission denied" and adds nothing worth restoring, so they're skipped
+    /// on every backup task rather than surfacing as a failed run each time.
+    private static let defaultExcludes = [
+        ".DocumentRevisions-V100",
+        ".TemporaryItems",
+        ".Trashes",
+        ".fseventsd",
+        ".Spotlight-V100",
+    ]
+
+    private static var excludeArguments: [String] {
+        defaultExcludes.map { "--exclude=\($0)" }
     }
 
     static func locateRsyncExecutable() -> String {
@@ -93,8 +110,11 @@ enum RsyncRunner {
 
         log("Calculating sync size…")
         // Wired to `handle` (not just the real transfers below) so Pause/Stop take
-        // effect immediately even while this scan is still running — it uses -c
-        // (checksum) comparison, which can take real time on large existing trees.
+        // effect immediately even while this scan is still running. Uses rsync's
+        // default quick-check (size + mtime) rather than -c/--checksum — checksum
+        // mode reads and hashes every byte of every file on both sides to detect
+        // changes, which on a multi-TB tree can take longer than the transfer
+        // itself even when almost nothing changed.
         let perSourceBytes = eligibleSources.map { entry -> Int64 in
             guard handle?.isCancelled != true else { return 0 }
             return estimateTransferBytes(for: entry, destSlash: destSlash, rsyncPath: rsyncPath, handle: handle)
@@ -131,9 +151,10 @@ enum RsyncRunner {
             let process = Process()
             process.executableURL = URL(fileURLWithPath: rsyncPath)
             var arguments = [
-                "-a", "-c", "--itemize-changes",
+                "-a", "--itemize-changes",
                 "--backup", "--backup-dir=\(versionRoot)"
             ]
+            arguments += excludeArguments
             arguments += useProgress2 ? ["--info=progress2"] : ["--progress"]
             arguments += [rsyncSource, destSlash]
             process.arguments = arguments
@@ -144,6 +165,7 @@ enum RsyncRunner {
 
             var outputBuffer = Data()
             var collectedLines: [String] = []
+            var lastCollectedLine: String?
             var sourceCompletedFilesBytes: Int64 = 0
             var currentFileBytes: Int64 = 0
             var lastProgressPost = Date.distantPast
@@ -187,7 +209,16 @@ enum RsyncRunner {
                         sourceCompletedFilesBytes += currentFileBytes
                         currentFileBytes = 0
                     }
-                    collectedLines.append(line)
+                    // rsync redraws its progress line in place (via \r) many times a
+                    // second, especially while lingering at "100%" during checksum/
+                    // cleanup work at the end of a transfer — without this, a single
+                    // run can log the same line hundreds of thousands of times and
+                    // balloon the log file to tens of MB, which is what made every
+                    // Activity Log read/refresh (a full-file read) freeze the UI.
+                    if line != lastCollectedLine {
+                        collectedLines.append(line)
+                        lastCollectedLine = line
+                    }
                 }
             }
 
@@ -246,12 +277,12 @@ enum RsyncRunner {
     }
 
     /// Dry-runs one source through rsync with `--stats` to find out how many bytes
-    /// it would actually transfer (honoring the same checksum comparison and
-    /// versioning args as the real run), without writing anything.
+    /// it would actually transfer (honoring the same quick-check comparison as
+    /// the real run), without writing anything.
     private static func estimateTransferBytes(for entry: SourceEntry, destSlash: String, rsyncPath: String, handle: RunHandle?) -> Int64 {
         let process = Process()
         process.executableURL = URL(fileURLWithPath: rsyncPath)
-        process.arguments = ["-a", "-c", "--dry-run", "--stats", rsyncSourcePath(for: entry), destSlash]
+        process.arguments = ["-a", "--dry-run", "--stats"] + excludeArguments + [rsyncSourcePath(for: entry), destSlash]
         let pipe = Pipe()
         process.standardOutput = pipe
         process.standardError = Pipe()

@@ -4,6 +4,31 @@ A native macOS app for running scheduled, versioned backups with `rsync`. It man
 
 Requires macOS 13 (Ventura) or later.
 
+## Get a modern rsync via Homebrew (recommended)
+
+macOS's built-in `rsync` is either an ancient 2.6.9-era build or, on recent
+macOS, Apple's `openrsync` reimplementation — both lack `--info=progress2`,
+which is what this app uses to show a live progress bar and ETA per task,
+and both are missing years of upstream `rsync` bug fixes and performance
+work. The app still runs fine without it — sources are backed up and
+versioned correctly either way — but you get a plainer experience (no
+progress bar/ETA) until a newer `rsync` is available.
+
+1. **Install Homebrew** if you don't already have it — one command from the
+   Terminal, see [brew.sh](https://brew.sh).
+2. **Install rsync**:
+   ```
+   brew install rsync
+   ```
+
+The app checks once a day and will try to run this for you automatically if
+Homebrew is already installed, but that background check depends on the app
+being able to find and run `brew` the same way a Terminal shell does, which
+isn't always reliable from a GUI app on every machine. If you want to be
+certain you're on a current `rsync`, run the command above yourself — the
+app always prefers a Homebrew-installed `rsync` (`/opt/homebrew/bin/rsync`
+or `/usr/local/bin/rsync`) over macOS's own, with no configuration needed.
+
 ## Features
 
 ### Sync tasks
@@ -18,7 +43,7 @@ Add any number of source directories to a task. Each source independently choose
 Pick any folder or mounted volume as a task's destination. The app shows a live reachability indicator (green/red) so you know at a glance if a destination drive is unmounted before a run fails.
 
 ### Versioned backups
-Nothing is silently overwritten. Whenever a file in the destination is about to be replaced because its checksum changed, the old copy is moved into a timestamped `.versions/<date>_<time>/` folder first — simple, automatic point-in-time recovery.
+Nothing is silently overwritten. Whenever a file in the destination is about to be replaced because it changed, the old copy is moved into a timestamped `.versions/<date>_<time>/` folder first — simple, automatic point-in-time recovery.
 
 ### Scheduling
 Each task can run automatically: hourly, daily at a set time, weekly on a chosen day, or every N minutes. Schedules are implemented as per-task `launchd` LaunchAgents — the native macOS mechanism, and more reliable than cron under modern macOS's permission model. Turning a schedule off cleanly removes its LaunchAgent.
@@ -30,7 +55,7 @@ A full window for managing tasks, sources, destinations, and schedules, plus an 
 Clicking "Run Now" shows exactly when a task finishes — "Completed at HH:MM" in green, or "Failed at HH:MM" in red — right where you clicked, plus in the menu bar and sidebar.
 
 ### No separate installs required
-The app shells out to the `rsync` already built into macOS (`/usr/bin/rsync`), so there's nothing extra to download. If you `brew install rsync` for a newer version, the app automatically prefers that one.
+The app shells out to the `rsync` already built into macOS (`/usr/bin/rsync`), so there's nothing extra to download to get started. See [Get a modern rsync via Homebrew](#get-a-modern-rsync-via-homebrew-recommended) above for why you'd want a newer one anyway.
 
 ## Configuration & data
 

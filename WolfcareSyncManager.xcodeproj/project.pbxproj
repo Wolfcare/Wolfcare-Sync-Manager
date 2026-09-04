@@ -19,6 +19,7 @@
 		5F59975BBCB1221400D69A99 /* FullDiskAccessChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5AF4E53952AF8664A2AE4E /* FullDiskAccessChecker.swift */; };
 		770C2A1966E0625E4489B74D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12A9C38A56AE3B4D00136FBC /* AppDelegate.swift */; };
 		7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB077A4A627D6191A9271C64 /* ScheduleKind.swift */; };
+		8FED9D4D67837B59D075824E /* RsyncUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CFA7FE6134338D7520CF29 /* RsyncUpdater.swift */; };
 		90A9F6818AF57E9A7F666595 /* SyncProgressTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A513E475DD13A47FE64331B9 /* SyncProgressTracker.swift */; };
 		90AD4031E85DCEFCED856D23 /* ConfigIO.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D8F77B4BB5DA32646E91F3 /* ConfigIO.swift */; };
 		979FA4DC5A6EA133AD41B939 /* DestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEC026D5D850A3E63A30C0A /* DestinationView.swift */; };
@@ -47,6 +48,7 @@
 		28493432E086A15C39C44120 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
 		2DB14C7B8C34CA5174D34133 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2DEC026D5D850A3E63A30C0A /* DestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationView.swift; sourceTree = "<group>"; };
+		35CFA7FE6134338D7520CF29 /* RsyncUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RsyncUpdater.swift; sourceTree = "<group>"; };
 		361E04A59E6EC998D6035B01 /* RunBackupButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunBackupButton.swift; sourceTree = "<group>"; };
 		43679D532023BC3C0198A85C /* SyncTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTask.swift; sourceTree = "<group>"; };
 		4C5AF4E53952AF8664A2AE4E /* FullDiskAccessChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullDiskAccessChecker.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				EEA8E553275C23641D861E5C /* HeadlessRunner.swift */,
 				9DE8AEDC76166684070588C9 /* LaunchAgentManager.swift */,
 				4CD4C4733EF4EF24F1B9A7CD /* RsyncRunner.swift */,
+				35CFA7FE6134338D7520CF29 /* RsyncUpdater.swift */,
 				722DFB000CB84B522B08FCB7 /* RunHandle.swift */,
 				897F2AA15F06A12B386D2C97 /* ScheduledRunBridge.swift */,
 				7EF2DA7F1D6C8C1F3397A89D /* UpdateChecker.swift */,
@@ -241,6 +244,7 @@
 				ABD3BC2650154F48669B4B6C /* MenuBarContentView.swift in Sources */,
 				EE27EEE5C76532DDF46DE3CD /* MenuBarIconRenderer.swift in Sources */,
 				9FE7C1418043A643EA304362 /* RsyncRunner.swift in Sources */,
+				8FED9D4D67837B59D075824E /* RsyncUpdater.swift in Sources */,
 				416D1A4432E095B69FA92C55 /* RunBackupButton.swift in Sources */,
 				0583EB99874E0DECAD1D1C2F /* RunHandle.swift in Sources */,
 				7DDB4FBAA41C4F37F1CF5278 /* ScheduleKind.swift in Sources */,
@@ -387,7 +391,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 36;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -409,7 +413,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 36;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = Sources/App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
