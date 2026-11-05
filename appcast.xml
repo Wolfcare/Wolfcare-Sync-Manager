@@ -6,6 +6,24 @@
         <description>Automatic updates for Imitor Sync Manager.</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.5</title>
+            <pubDate>Thu, 05 Nov 2026 14:50:06 +0000</pubDate>
+            <sparkle:version>1.0.5</sparkle:version>
+            <sparkle:shortVersionString>1.0.5</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+            <description><![CDATA[
+                <h3>Versioned backups no longer grow without bound</h3>
+                <ul>
+                    <li>The .versions folder on your destination could grow indefinitely over time. Now only the most recent sync's versioned files are kept — older ones are deleted automatically right after each successful sync. A failed or interrupted sync leaves existing versions alone. This also automatically cleans up any backlog already on your destination, starting with the next successful sync of each task.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://github.com/Wolfcare/Wolfcare-Sync-Manager/releases/download/v1.0.5/Imitor-Sync-Manager-1.0.5.zip"
+                sparkle:edSignature="ZDPS7EqLdNpxEYjuxdSwZxsc6djPzF4QFogT2Gg3X0BBapllAddPhLAtMontmlo/vVROG/Dkvy9rpioYnikRDw=="
+                length="2000010"
+                type="application/octet-stream" />
+        </item>
+        <item>
             <title>Version 1.0.4</title>
             <pubDate>Sun, 13 Sep 2026 00:39:03 +0000</pubDate>
             <sparkle:version>1.0.4</sparkle:version>
